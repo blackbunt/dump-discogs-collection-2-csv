@@ -5,7 +5,7 @@ import csv
 
 
 username = "your_username"
-apikey = "your_discogs_api_key"
+apikey = "your_api_key"
 
 API_BASEURL = "https://api.discogs.com"
 API_FORMAT = "application/vnd.discogs.v2.plaintext+json"
@@ -37,10 +37,10 @@ value_max = v.json()['maximum']
 
 
 with open(DATA_FILE, 'w', newline='') as f:
-    writer = csv.writer(f, delimiter=',')
-    writer.writerow(["Discogs", "Collection Dump"])
-    writer.writerow([])
-    writer.writerow(["Minimum:", value_min, "Median:", value_med, "Maximum:", value_max])
+    writer = csv.writer(f, delimiter=',', dialect='excel')
+    writer.writerow([""username"", "Discogs Collection Dump", "Value:", "Minimum: " + value_min])
+    writer.writerow(["", "", "", "Median: " + value_med])
+    writer.writerow(["", "", "",  "Maximum: " + value_max])
     writer.writerow([])
     writer.writerow(["Discogs-Id", "Artist", "Album Title", "Year", "Format", "Media-Condition", "Sleeve-Condition",
                      "Label", "Catalog#", "Genres", "Styles", "Date added", "Rating",
