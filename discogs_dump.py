@@ -38,10 +38,10 @@ value_max = v.json()['maximum']
 
 with open(DATA_FILE, 'w', newline='') as f:
     writer = csv.writer(f, delimiter=',', dialect='excel')
-    writer.writerow([""username"", "Discogs Collection Dump", "Value:", "Minimum: " + value_min])
-    writer.writerow(["", "", "", "Median: " + value_med])
-    writer.writerow(["", "", "",  "Maximum: " + value_max])
-    writer.writerow([])
+    #writer.writerow([""username"", "Discogs Collection Dump", "Value:", "Minimum: " + value_min])
+    #writer.writerow(["", "", "", "Median: " + value_med])
+    #writer.writerow(["", "", "",  "Maximum: " + value_max])
+    #writer.writerow([])
     writer.writerow(["Discogs-Id", "Artist", "Album Title", "Year", "Format", "Media-Condition", "Sleeve-Condition",
                      "Label", "Catalog#", "Genres", "Styles", "Date added", "Rating",
                      "Cover Low Url", "Cover Full Url"])
