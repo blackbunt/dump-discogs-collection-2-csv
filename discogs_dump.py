@@ -1,11 +1,75 @@
 import json
 import requests
 import csv
+import re
 
 
 
-username = "your_username"
-apikey = "your_api_key"
+def cleanup_artist(artist_raw):  # clean up artist for url-generatrion
+    if re.search(" / ", artist_raw):  # removes " / "
+        #print("jupp " + artist_raw + " enthält /.")
+        artist_raw = re.sub(" / ", "-", artist_raw)
+        #print(artist_raw)
+
+    if re.search("[(]+[\d+]+[)]+$", artist_raw):  # removes "(digit)"
+        #print("jupp " + artist_raw + " enthält (#).")
+        artist_raw = re.sub("[(]+[\d+]+[)]+$", "",artist_raw)
+        #print(artist_raw)
+
+
+
+    if re.search("\W+[^-]", artist_raw):  # remove unwanted chars
+        #print("jupp " + artist_raw + " enthält ungewünschte zeichen.")
+        artist_raw = re.sub("\W+(?![-])", "-", artist_raw)
+        #print(artist_raw)
+
+    if re.search("[-]+$", artist_raw):
+        #print("jupp " + artist_raw + " hat noch n Leerzeichen am Ende.")
+        artist_raw = re.sub("[-]+$", "", artist_raw)
+        #print(artist_raw)
+
+    return artist_raw
+
+def cleaup_title(title_raw):  # cleanup album-title for Url-Generation
+    if re.search(" / ", title_raw):  # removes " / "
+        #print("jupp " + title_raw + " enthält /.")
+        title_raw = re.sub(" / ", "-", title_raw)
+        #print(artist_raw)
+
+    if re.search("[(]+[\d+]+[)]+$", title_raw):  # removes "(digit)"
+        #print("jupp " + title_raw + " enthält (#).")
+        title_raw = re.sub("[(]+[\d+]+[)]+$", "",title_raw)
+        #print(title_raw)
+
+
+
+    if re.search("\W+[^-]", title_raw):  # remove unwanted chars
+        #print("jupp " + title_raw + " enthält ungewünschte zeichen.")
+        title_raw = re.sub("\W+(?![-])", "-", title_raw)
+        #print(title_raw)
+
+    if re.search("[-]+$", title_raw):
+        #print("jupp " + title_raw + " hat noch n Leerzeichen am Ende.")
+        title_raw = re.sub("[-]+$", "", title_raw)
+        #print(title_raw)
+
+    return title_raw
+
+def url_checker(url, artist, album):  # check if generated Discogs-Url is valid
+    #print("checking if url for " + artist + "-" + album + " is valid...")
+    res = requests.get(url)
+    #print(res)
+    if str(res) == "<Response [200]>":
+        print("Discogs-Url " + url + " is valid.")
+        return True
+
+    else:
+        #print("Discogs-Url '" + url + "' is not valid.")
+        return False
+
+
+username = "user_name"
+apikey = "api-token"
 
 API_BASEURL = "https://api.discogs.com"
 API_FORMAT = "application/vnd.discogs.v2.plaintext+json"
@@ -43,8 +107,9 @@ with open(DATA_FILE, 'w', newline='') as f:
     #writer.writerow(["", "", "",  "Maximum: " + value_max])
     #writer.writerow([])
     writer.writerow(["Discogs-Id", "Artist", "Album Title", "Year", "Format", "Media-Condition", "Sleeve-Condition",
-                     "Label", "Catalog#", "Genres", "Styles", "Date added", "Rating",
+                     "Label", "Catalog#", "Genres", "Styles", "Date added", "Rating", "Discogs-Webpage",
                      "Cover Low Url", "Cover Full Url"])
+
 
     for page in range(1, total_pages + 1):
         print("Fetching Page " + str(page) + " of " + str(total_pages))
@@ -60,15 +125,16 @@ with open(DATA_FILE, 'w', newline='') as f:
         for sample in releases:
             sep = ", "  # for joining strings
             try:
-                artist = sample['basic_information']['artists'][0]['name']                      # Artist
-                album_title = sample['basic_information']['title']                              # Album title
+                artist_raw = sample['basic_information']['artists'][0]['name']                  # Artist
+                artist = re.sub("[\s]+[(]+[\d]+[)]+$", "", artist_raw)                          # removes ( digit )
+                album_title_raw = sample['basic_information']['title']                          # Album title
                 year = str(sample['basic_information']['year'])                                 # Release Year
                 cover_full = sample['basic_information']['cover_image']                         # Full-Res Cover Art Url
                 cover_low = sample['basic_information']['thumb']                                # Low-Res Cover Art Url
                 genres = sample['basic_information']['genres'][0]                               # Genres
                 styles = sep.join(sample['basic_information']['styles'])                        # Styles
-                id = str(sample['basic_information']['id'])                                     # Discogs-ID
-                format = sep.join(sample['basic_information']['formats'][0]['descriptions'])    # Format
+                discogs_id = str(sample['basic_information']['id'])                             # Discogs-ID
+                formats = sep.join(sample['basic_information']['formats'][0]['descriptions'])   # Format
                 label_name = sample['basic_information']['labels'][0]['name']                   # Label Name
                 catno = str(sample['basic_information']['labels'][0]['catno'])                  # Catalog#
                 added = str(sample['date_added'])                                               # Date Added
@@ -78,8 +144,22 @@ with open(DATA_FILE, 'w', newline='') as f:
             except:
                 None
 
+            base_url = "https://www.discogs.com/"
 
-            writer.writerow([id, artist, album_title, year, format, cond_media, cond_sleeve, label_name, catno,
-                             genres, styles, added, rating, cover_low, cover_full + ","])
+            artist_url = cleanup_artist(artist)
+            title_url = cleaup_title(album_title_raw)
+            
+
+            # Generate Discogs-Url
+            discogs_url = base_url + artist_url + "-" + title_url + "/release/" + str(discogs_id)
+
+            print("Checking if Url for " + artist + "-" + album_title_raw + " is valid...")
+            if url_checker(discogs_url, artist, album_title_raw):
+                #print("VALID for " + artist + " - " + album_title_raw + " !")
+                discogs_url = "NOT VALID URL"
+                print("FAILED for " + artist + " - " + album_title_raw + " !")
+
+            writer.writerow([id, artist, album_title_raw, year, formats, cond_media, cond_sleeve, label_name, catno,
+                             genres, styles, added, rating, discogs_url, cover_low, cover_full + ","])
     f.close()
 print("All saved to csv!")
