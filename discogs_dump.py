@@ -80,6 +80,6 @@ with open(DATA_FILE, 'w', newline='') as f:
 
 
             writer.writerow([id, artist, album_title, year, format, cond_media, cond_sleeve, label_name, catno,
-                             genres, styles, added, rating, cover_low, cover_full])
+                             genres, styles, added, rating, cover_low, cover_full + ","])
     f.close()
 print("All saved to csv!")
