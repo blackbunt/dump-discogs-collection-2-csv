@@ -3,8 +3,6 @@ import requests
 import csv
 import re
 
-
-
 def cleanup_artist(artist_raw):  # clean up artist for url-generatrion
     if re.search(" / ", artist_raw):  # removes " / "
         #print("jupp " + artist_raw + " enthält /.")
@@ -68,7 +66,7 @@ def url_checker(url, artist, album):  # check if generated Discogs-Url is valid
         return False
 
 
-username = "user_name"
+username = "user-name"
 apikey = "api-token"
 
 API_BASEURL = "https://api.discogs.com"
@@ -148,15 +146,17 @@ with open(DATA_FILE, 'w', newline='') as f:
 
             artist_url = cleanup_artist(artist)
             title_url = cleaup_title(album_title_raw)
-            
+            url = [artist_url, "/", title_url, "/release/", discogs_id]
 
             # Generate Discogs-Url
             discogs_url = base_url + artist_url + "-" + title_url + "/release/" + str(discogs_id)
 
             print("Checking if Url for " + artist + "-" + album_title_raw + " is valid...")
             if url_checker(discogs_url, artist, album_title_raw):
-                #print("VALID for " + artist + " - " + album_title_raw + " !")
+                print("VALID for " + artist + " - " + album_title_raw + " !")
                 discogs_url = "NOT VALID URL"
+
+            else:
                 print("FAILED for " + artist + " - " + album_title_raw + " !")
 
             writer.writerow([id, artist, album_title_raw, year, formats, cond_media, cond_sleeve, label_name, catno,
