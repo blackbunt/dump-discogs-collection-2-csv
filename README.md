@@ -10,5 +10,7 @@ I use this to serve the qr folder for Mergefield in Word to automatically add th
  1. You need an API-Key: https://www.discogs.com/settings/developers
 
  2. Add your username and apikey to the config file
-
- 3. run DumpDiscogs.py
+ 
+ 3. run setup.py to install missing packages
+ 
+ 4. run DumpDiscogs.py
