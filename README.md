@@ -11,6 +11,6 @@ I use this to serve the qr folder for Mergefield in Word to automatically add th
 
  2. Add your username and apikey to the config file
  
- 3. run setup.py to install missing packages
+ 3. install missing packages with pip install requests pandas xlsxwriter qrcode Image
  
  4. run DumpDiscogs.py
