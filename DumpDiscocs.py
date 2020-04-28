@@ -6,11 +6,12 @@ import cleanup_strings as clean
 import write_to_file as writefile
 import print as _print
 import menu as _menu
-import os
 import qr as qr
 import threading
 import configparser
-import pandas as pd
+import check_exists as exist
+import urllib.request
+
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -124,4 +125,28 @@ while True:
             print("All done!")
             input("Press Enter to continue...")
 
+    # dump cover art
+    elif user_input == '5':
+        if url_checker.url_checker("https://api.discogs.com"):
+            print("Connection to Discogs established.")
+            print("")
+            _db = collection.get_collection(username, apitoken)
+            total_items = collection.get_total_item(username, apitoken)
+            exist.folder_checker('Cover-Art')
+            for item in range(0, total_items + 1):
+                try:
+                    discogs_no = str(_db.iloc[item]['discogs_no'])
+                    artist = str(_db.iloc[item]['artist'])
+                    album_title = str(_db.iloc[item]['album_title'])
 
+                    filename = discogs_no + "_" + artist + '-' + album_title + '.jpg'
+                    cover_art_url = str(_db.iloc[item]['cover_full_url'])
+
+                    if not exist.file_checker('Cover-Art/' + filename):
+                        urllib.request.urlretrieve(cover_art_url,'Cover-Art/' + filename)
+                        print("Cover for " + artist + "-" + album_title + " downloaded.")
+                except:
+                    None
+
+            print("All done!")
+            input("Press Enter to continue...")
