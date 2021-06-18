@@ -64,7 +64,8 @@ while True:
             print("Connection to Discogs established.")
             print("")
             _db = collection.get_collection(username, apitoken)
-
+            _db.sort_values(["date_added", "artist"], axis=0,
+                            ascending=[False, True], inplace=True)
             while True:
                 filename = str(input("Enter Filename of Excel-File: "))
                 if filename != "_db":
@@ -88,16 +89,18 @@ while True:
             print("")
             _db = collection.get_collection(username, apitoken)
 
-            while True:
-                filename = str(input("Enter Filename of Csv-File: "))
-                if filename != "_db":
-                    writefile.write_2_csv(_db, filename)
-                    print("Write to File successful.")
-                    input("Press Enter to continue...")
+            _db.sort_values(["date_added", "artist"], axis=0,
+                             ascending=[False, True], inplace=True)
 
-                else:
-                    print("You can't name the file '_db' !")
-                    input("Press Enter to continue...")
+            filename = str(input("Enter Filename of Csv-File: "))
+            if filename != "_db":
+                writefile.write_2_csv(_db, filename)
+                print("Write to File successful.")
+                input("Press Enter to continue...")
+
+            else:
+                print("You can't name the file '_db' !")
+                input("Press Enter to continue...")
 
         else:
             print("No Connection to Discogs possible...")
