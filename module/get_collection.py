@@ -62,6 +62,10 @@ def get_collection(username, apikey):
     r = session.get(API_BASEURL + '/users/' + username + '/collection/folders/0/releases', params=query,
                     headers=headers)
     jsondoc = json.loads(r.text.encode('utf-8'))
+
+    if "message" in jsondoc:
+        print("** Message from server: '{}' **".format(jsondoc["message"]))
+
     total_pages = int(jsondoc['pagination']['pages'])
     total_items = int(jsondoc['pagination']['items'])
     item = 1
