@@ -96,54 +96,66 @@ def get_collection(username, apikey):
             item += 1
 
             try:
-
                 artist_raw = release['basic_information']['artists'][0]['name']  # Artist
                 album_title_raw = release['basic_information']['title']  # Album title
                 discogs_no = str(release['basic_information']['id'])  # Discogs-ID
-                artist = clean.cleanup_artist(artist_raw)  # removes ( digit )
                 year = str(release['basic_information']['year'])  # Release Year
-                format = sep.join(release['basic_information']['formats'][0]['descriptions'])  # Format
-                media_condition = release['notes'][0]['value']  # Media Condition
-                sleeve_condition = release['notes'][1]['value']  # Sleeve Condition
                 label = release['basic_information']['labels'][0]['name']  # Label Name
                 catalog_no = str(release['basic_information']['labels'][0]['catno'])  # Catalog#
                 genres = release['basic_information']['genres'][0]  # Genres
                 styles = sep.join(release['basic_information']['styles'])  # Styles
                 date_added = str(release['date_added'])  # Date Added
                 rating = release['rating']  # Rating
-                discogs_webpage = gen_url(clean.cleanup_artist_url(artist_raw),
-                                          clean.cleanup_title(album_title_raw),
-                                          discogs_no)
                 cover_low_url = release['basic_information']['thumb']  # Low-Res Cover Art Url
                 cover_full_url = release['basic_information']['cover_image']  # Full-Res Cover Art Url
 
-                qr_code = "http://127.0.0.1:1224/qr/" + discogs_no + "_" + artist.replace(" ", "%20").replace("?", "3F")\
-                          + "-" + \
-                          album_title_raw.replace(" ", "%20").replace("?", "3F")\
-                          + ".png"
-
-                # add entries to list
                 row['discogs_no'] = discogs_no
                 row['artist_raw'] = artist_raw
-                row['artist'] = artist
                 row['album_title'] = album_title_raw
                 row['year'] = year
-                row['format'] = format
-                row['media_condition'] = media_condition
-                row['sleeve_condition'] = sleeve_condition
                 row['label'] = label
                 row['catalog#'] = catalog_no
                 row['genres'] = genres
                 row['styles'] = styles
                 row['date_added'] = date_added
                 row['rating'] = rating
-                row['discogs_webpage'] = discogs_webpage
                 row['cover_low_url'] = cover_low_url
                 row['cover_full_url'] = cover_full_url
+
+            except:
+                print("   EXCEPTION: JSON logic changed. - item #" + str(item - 1) + " - "
+                      + str(release['basic_information']['title']))
+
+            try:
+                media_condition = release['notes'][0]['value']  # Media Condition
+                sleeve_condition = release['notes'][1]['value']  # Sleeve Condition
+                row['media_condition'] = media_condition
+                row['sleeve_condition'] = sleeve_condition
+
+            except:
+                media_condition = sleeve_condition = "no condition"
+                row['media_condition'] = media_condition
+                row['sleeve_condition'] = sleeve_condition
+
+            try:
+                format = sep.join(release['basic_information']['formats'][0]['descriptions'])  # Format
+                discogs_webpage = gen_url(clean.cleanup_artist_url(artist_raw),
+                                          clean.cleanup_title(album_title_raw),
+                                          discogs_no)
+                artist = clean.cleanup_artist(artist_raw)  # removes ( digit )
+                qr_code = "http://127.0.0.1:1224/qr/" + discogs_no + "_" + artist.replace(" ", "%20").replace("?", "3F") \
+                          + "-" + \
+                          album_title_raw.replace(" ", "%20").replace("?", "3F") \
+                          + ".png"
+
+                row['format'] = format
+                row['discogs_webpage'] = discogs_webpage
+                row['artist'] = artist
                 row['qr_code'] = qr_code
 
             except:
-                None
+                print("   WARNING: Formatting & QR code - item #" + str(item - 1) + " - "
+                      + str(release['basic_information']['title']))
 
             # add list into the dictionary "collection"
             collection.append(row)
@@ -188,6 +200,3 @@ def get_collection_value(username, apikey):
     df = pd.DataFrame(value)
 
     return df
-
-
-
