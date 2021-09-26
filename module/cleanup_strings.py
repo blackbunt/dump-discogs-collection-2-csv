@@ -3,7 +3,7 @@
 import re
 
 
-def cleanup_artist(artist):  # clean up artist for entry in db
+def cleanup_artist(artist):  # clean up artist for entry in db - removes "( digit )"
     if re.search("[(]+[\d+]+[)]+$", artist):  # removes "(digit)"
         # print("jupp " + artist_raw + " enthält (#).")
         artist = re.sub("[(]+[\d+]+[)]+$", "", artist)
@@ -58,4 +58,6 @@ def cleanup_title(title):  # cleanup album-title for Url-Generation
 
     return title
 
+def cleanup_styles(styles):
+    return styles.replace("[","").replace("]","").replace("'","")
 
