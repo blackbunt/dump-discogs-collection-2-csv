@@ -2,6 +2,7 @@ from qrcode import *
 import qrcode.image.pil
 
 import check_exists as exist
+import cleanup_strings as clean
 
 
 def gen_qr(discogs_link, discogs_no, artist, album_title):
@@ -9,7 +10,8 @@ def gen_qr(discogs_link, discogs_no, artist, album_title):
 
 
     # output filename
-    filename = discogs_no + "_" + artist + "-" + album_title + ".png"
+    filename = discogs_no + "_" + clean.cleanup_artist(artist) + "-" + clean.cleanup_title(album_title) + ".png"
+    print("filename: " + filename)
     if not exist.file_checker(filename):
         # Create qr code instance
         qr = QRCode(version=4, box_size=5, border=0, error_correction=ERROR_CORRECT_L)

@@ -119,7 +119,7 @@ def get_collection(username, apikey):
 
             # Generate URL for Webpage and QR code
             try:
-                row['discogs_webpage'] = gen_url(row['artist'],row['album_title'],row['discogs_no'])
+                row['discogs_webpage'] = gen_url(clean.cleanup_artist(row['artist']),clean.cleanup_title(['album_title']),row['discogs_no'])
                 row['qr_code'] = "http://127.0.0.1:1224/qr/" + row['discogs_no'] + "_" + row['artist']\
                      .replace(" ", "%20").replace("?", "3F") + "-" + clean.cleanup_title(row['album_title']) + ".png"
             except Exception:

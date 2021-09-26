@@ -124,7 +124,7 @@ while True:
                     qr.gen_qr(discogs_link, discogs_no, artist, album_title)
                     print("QR-Code for " + artist + "-" + album_title + " created.")
                 except:
-                    None
+                    print("Unable to create QR code for item: " + str(item) + " with album: " + album_title)
             print("All done!")
             input("Press Enter to continue...")
 
