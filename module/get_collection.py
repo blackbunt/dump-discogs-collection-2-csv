@@ -17,11 +17,12 @@ DATA_FILE = '../db.csv'
 def gen_url(artist, album_title, discogs_no):
     base_url = "https://www.discogs.com/"
 
-    artist_url = clean.cleanup_artist(artist)
-    title_url = clean.cleanup_title(album_title)
+    artist_url = clean.cleanup_artist_url(artist)
+    title_url = clean.cleanup_title_url(album_title)
 
     # Generate Discogs-Url
     discogs_url = base_url + artist_url + "-" + title_url + "/release/" + discogs_no
+    print(discogs_url)
     return discogs_url
 
 
@@ -119,16 +120,18 @@ def get_collection(username, apikey):
 
             # Generate URL for Webpage and QR code
             try:
-                row['discogs_webpage'] = gen_url(clean.cleanup_artist(row['artist']),clean.cleanup_title(['album_title']),row['discogs_no'])
-                row['qr_code'] = "http://127.0.0.1:1224/qr/" + row['discogs_no'] + "_" + row['artist']\
-                     .replace(" ", "%20").replace("?", "3F") + "-" + clean.cleanup_title(row['album_title']) + ".png"
+                row['discogs_webpage'] = gen_url(row['artist'],row['album_title'],row['discogs_no'])
+                row['qr_code'] = "http://127.0.0.1:1224/qr/" \
+                    + row['discogs_no'] + "_" \
+                    + clean.cleanup_artist_url(row['artist']) + "-" \
+                    + clean.cleanup_title_url(row['album_title']) + ".png"
             except Exception:
                 traceback.print_exc()
 
             # add list into the dictionary "collection"
             collection.append(row)
 
-    print("Success!")
+    print("Collection created!")
 
     # create pandas data frame
     df = pd.DataFrame(collection)

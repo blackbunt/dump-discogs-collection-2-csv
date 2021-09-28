@@ -64,6 +64,31 @@ while True:
             print("Connection to Discogs established.")
             print("")
             _db = collection.get_collection(username, apitoken)
+######
+
+            total_items = collection.get_total_item(username, apitoken)
+
+            print("Create QR codes")
+            print("")
+            
+            for item in range(0, total_items + 1):
+                try:
+                    discogs_no = str(_db.iloc[item]['discogs_no'])
+                    artist = str(_db.iloc[item]['artist'])
+                    album_title = str(_db.iloc[item]['album_title'])
+                    discogs_link = str(_db.iloc[item]['discogs_webpage'])
+                    qr.gen_qr(discogs_link, discogs_no, artist, album_title)
+                    print("QR-Code for " + artist + "-" + album_title + " created.")
+                except:
+                    print("Unable to create QR code for item: " + str(item) + " with album: " + album_title)
+
+
+
+
+
+
+
+######
             _db.sort_values(["date_added", "artist"], axis=0,
                             ascending=[False, True], inplace=True)
             while True:
@@ -82,7 +107,7 @@ while True:
             print("No Connection to Discogs possible...")
             input("Press Enter to continue...")
 
-    # dump collection 2 Excel-File
+    # dump collection 2 CSV-File
     elif user_input == '3':
         if url_checker.url_checker("https://api.discogs.com"):
             print("Connection to Discogs established.")
@@ -107,12 +132,12 @@ while True:
             input("Press Enter to continue...")
 
     # create qr codes
-    elif user_input == '4':
-        if url_checker.url_checker("https://api.discogs.com"):
-            print("Connection to Discogs established.")
-            print("")
+#    elif user_input == '4':
+#        if url_checker.url_checker("https://api.discogs.com"):
+#            print("Connection to Discogs established.")
+#            print("")
 
-            _db = collection.get_collection(username, apitoken)
+#            _db = collection.get_collection(username, apitoken)
             total_items = collection.get_total_item(username, apitoken)
 
             for item in range(0, total_items + 1):

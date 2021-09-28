@@ -10,7 +10,7 @@ def gen_qr(discogs_link, discogs_no, artist, album_title):
 
 
     # output filename
-    filename = discogs_no + "_" + clean.cleanup_artist(artist) + "-" + clean.cleanup_title(album_title) + ".png"
+    filename = discogs_no + "_" + clean.cleanup_artist_url(artist) + "-" + clean.cleanup_title_url(album_title) + ".png"
     print("filename: " + filename)
     if not exist.file_checker(filename):
         # Create qr code instance

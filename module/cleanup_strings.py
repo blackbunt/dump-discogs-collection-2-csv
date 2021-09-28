@@ -3,59 +3,82 @@
 import re
 
 
-def cleanup_artist(artist):  # clean up artist for entry in db - removes "( digit )"
+def cleanup_artist(artist):  # removes "( digit )"
+    print("cleanup_artist: " + artist)
     if re.search("[(]+[\d+]+[)]+$", artist):  # removes "(digit)"
-        # print("jupp " + artist_raw + " enthält (#).")
         artist = re.sub("[(]+[\d+]+[)]+$", "", artist)
-
+    artist = artist.rstrip()
+    print("nach strip:**" + artist + "*****")
     return artist
 
 
-def cleanup_artist_url(artist):  # clean up artist for url-generatrion
-    if re.search(" / ", artist):  # removes " / "
-        # print("jupp " + artist_raw + " enthält /.")
-        artist = re.sub(" / ", "-", artist)
-        # print(artist_raw)
+def cleanup_artist_url(artist):  # url-generatrion
 
-    if re.search("[(]+[\d+]+[)]+$", artist):  # removes "(digit)"
-        # print("jupp " + artist_raw + " enthält (#).")
-        artist = re.sub("[(]+[\d+]+[)]+$", "", artist)
-        # print(artist_raw)
+    artist = cleanup_artist(artist)
+
+    print("cleanup_artist_url:" + artist)
+
+    if re.search(" / ", artist):  # removes " / "
+        artist = re.sub(" / ", "-", artist)
 
     if re.search("\W+[^-]", artist):  # remove unwanted chars
-        # print("jupp " + artist_raw + " enthält ungewünschte zeichen.")
         artist = re.sub("\W+(?![-])", "-", artist)
-        # print(artist_raw)
 
     if re.search("[-]+$", artist):
-        # print("jupp " + artist_raw + " hat noch n Leerzeichen am Ende.")
         artist = re.sub("[-]+$", "", artist)
-        # print(artist_raw)
 
+    if re.search("/", artist):
+        artist = re.sub("/","-", artist)
+
+    print("artist_url:" + artist)
     return artist
 
 
-def cleanup_title(title):  # cleanup album-title for Url-Generation
-    if re.search(" / ", title):  # removes " / "
-        # print("jupp " + title_raw + " enthält /.")
+def cleanup_title(title):
+
+    if re.search(" + ", title):  # removes " / "
         title = re.sub(" / ", "-", title)
-        # print(artist_raw)
 
     if re.search("[(]+[\d+]+[)]+$", title):  # removes "(digit)"
-        # print("jupp " + title_raw + " enthält (#).")
         title = re.sub("[(]+[\d+]+[)]+$", "", title)
-        # print(title_raw)
 
     if re.search("\W+[^-]", title):  # remove unwanted chars
-        # print("jupp " + title_raw + " enthält ungewünschte zeichen.")
         title = re.sub("\W+(?![-])", "-", title)
-        # print(title_raw)
 
     if re.search("[-]+$", title):
-        # print("jupp " + title_raw + " hat noch n Leerzeichen am Ende.")
         title = re.sub("[-]+$", "", title)
-        # print(title_raw)
 
+    if re.search("/", title):
+        title = re.sub("/", "-", title)
+
+    return title
+
+def cleanup_title_url(title):
+
+    title = cleanup_title(title)
+
+    print("cleanup_title: " + title)
+    
+    if re.search(" + ", title):  # removes " / "
+        title = re.sub(" / ", "-", title)
+
+    if re.search("[(]+[\d+]+[)]+$", title):  # removes "(digit)"
+        title = re.sub("[(]+[\d+]+[)]+$", "", title)
+
+    if re.search("\W+[^-]", title):  # remove unwanted chars
+        title = re.sub("\W+(?![-])", "-", title)
+
+    if re.search("[-]+$", title):
+        title = re.sub("[-]+$", "", title)
+
+    if re.search("/", title):
+        title = re.sub("/", "-", title)
+
+    if re.search(" ", title):
+        title = re.sub(" ", "-", title)
+
+    print("title: " + title)
+        
     return title
 
 def cleanup_styles(styles):
