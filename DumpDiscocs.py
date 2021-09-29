@@ -18,6 +18,7 @@ config.read('config.ini')
 username = config['Login']['username']
 apitoken = config['Login']['apitoken']
 
+api_discogs = "https://api.discogs.com"
 
 try:
     from http.server import HTTPServer, SimpleHTTPRequestHandler  # Python 3
@@ -47,115 +48,34 @@ while True:
 
     # get collection value
     elif user_input == '1':
-        if url_checker.url_checker("https://api.discogs.com"):
-            print("Connection to Discogs established.")
-            print("")
-            _db_val = collection.get_collection_value(username, apitoken)
-            print(_db_val)
-            input("Press Enter to continue...")
-
-        else:
-            print("No Connection to Discogs possible...")
-            input("Press Enter to continue...")
+        if url_checker.url_checker(api_discogs):
+            print(collection.get_collection_value(username, apitoken) + "\n")
 
     # dump collection 2 Excel-File
     elif user_input == '2':
-        if url_checker.url_checker("https://api.discogs.com"):
-            print("Connection to Discogs established.")
-            print("")
+        if url_checker.url_checker(api_discogs):
             _db = collection.get_collection(username, apitoken)
-######
-
-            total_items = collection.get_total_item(username, apitoken)
-
-            print("Create QR codes")
-            print("")
-            
-            for item in range(0, total_items + 1):
-                try:
-                    discogs_no = str(_db.iloc[item]['discogs_no'])
-                    artist = str(_db.iloc[item]['artist'])
-                    album_title = str(_db.iloc[item]['album_title'])
-                    discogs_link = str(_db.iloc[item]['discogs_webpage'])
-                    qr.gen_qr(discogs_link, discogs_no, artist, album_title)
-                    print("QR-Code for " + artist + "-" + album_title + " created.")
-                except:
-                    print("Unable to create QR code for item: " + str(item) + " with album: " + album_title)
-
-
-
-
-
-
-
-######
-            _db.sort_values(["date_added", "artist"], axis=0,
-                            ascending=[False, True], inplace=True)
-            while True:
-                filename = str(input("Enter Filename of Excel-File: "))
-                if filename != "_db":
-                    writefile.write_2_excel(_db, filename)
-                    print("Write to File successful.")
-                    input("Press Enter to continue...")
-                    break;
-
-                else:
-                    print("You can't name the file '_db' !")
-                    input("Press Enter to continue...")
-
-        else:
-            print("No Connection to Discogs possible...")
-            input("Press Enter to continue...")
+            qr.create_qr(_db, username, apitoken)
+            writefile.write_file(_db, 'Excel')
 
     # dump collection 2 CSV-File
     elif user_input == '3':
-        if url_checker.url_checker("https://api.discogs.com"):
-            print("Connection to Discogs established.")
-            print("")
+        if url_checker.url_checker(api_discogs):
             _db = collection.get_collection(username, apitoken)
-
-            _db.sort_values(["date_added", "artist"], axis=0,
-                             ascending=[False, True], inplace=True)
-
-            filename = str(input("Enter Filename of Csv-File: "))
-            if filename != "_db":
-                writefile.write_2_csv(_db, filename)
-                print("Write to File successful.")
-                input("Press Enter to continue...")
-
-            else:
-                print("You can't name the file '_db' !")
-                input("Press Enter to continue...")
-
-        else:
-            print("No Connection to Discogs possible...")
-            input("Press Enter to continue...")
+            qr.create_qr(_db, username, apitoken)
+            writefile.write_file(_db, 'Csv')
 
     # create qr codes
-#    elif user_input == '4':
-#        if url_checker.url_checker("https://api.discogs.com"):
-#            print("Connection to Discogs established.")
-#            print("")
+    elif user_input == '4':
+        if url_checker.url_checker(api_discogs):
+            print("Connection to Discogs established.")
 
-#            _db = collection.get_collection(username, apitoken)
-            total_items = collection.get_total_item(username, apitoken)
-
-            for item in range(0, total_items + 1):
-                try:
-                    discogs_no = str(_db.iloc[item]['discogs_no'])
-                    artist = str(_db.iloc[item]['artist'])
-                    album_title = str(_db.iloc[item]['album_title'])
-                    discogs_link = str(_db.iloc[item]['discogs_webpage'])
-                    qr.gen_qr(discogs_link, discogs_no, artist, album_title)
-                    print("QR-Code for " + artist + "-" + album_title + " created.")
-                except:
-                    print("Unable to create QR code for item: " + str(item) + " with album: " + album_title)
-            print("All done!")
-            input("Press Enter to continue...")
+            _db = collection.get_collection(username, apitoken)
+            qr.create_qr(_db, username, apitoken)
 
     # dump cover art
     elif user_input == '5':
-        if url_checker.url_checker("https://api.discogs.com"):
+        if url_checker.url_checker(api_discogs):
             print("Connection to Discogs established.")
             print("")
             _db = collection.get_collection(username, apitoken)
@@ -177,4 +97,5 @@ while True:
                     None
 
             print("All done!")
-            input("Press Enter to continue...")
+
+    input("Press Enter to continue...")
