@@ -13,6 +13,7 @@ API_LIMIT = 100
 CONVERTION_RATIO = 20
 DATA_FILE = '../db.csv'
 
+debug_mode = False
 
 def gen_url(artist, album_title, discogs_no):
     base_url = "https://www.discogs.com/"
@@ -130,10 +131,10 @@ def get_collection(username, apikey):
 
             # add list into the dictionary "collection"
             collection.append(row)
-            if item >= 2:
+            if (item >= 2) & debug_mode:
                 break
 
-        if item >= 2:
+        if (item >= 2) & debug_mode:
             break
 
 
