@@ -12,33 +12,36 @@ API_FORMAT = "application/vnd.discogs.v2.plaintext+json"
 API_LIMIT = 100
 CONVERTION_RATIO = 20
 DATA_FILE = '../db.csv'
+HTTPS_BASEURL = "https://www.discogs.com/"
 
 debug_mode = False
 
 def gen_url(artist, album_title, discogs_no):
-    base_url = "https://www.discogs.com/"
 
     artist_url = clean.cleanup_artist_url(artist)
     title_url = clean.cleanup_title_url(album_title)
 
     # Generate Discogs-Url
-    discogs_url = base_url + artist_url + "-" + title_url + "/release/" + discogs_no
+    discogs_url = HTTPS_BASEURL + artist_url + "-" + title_url + "/release/" + discogs_no
     print(discogs_url)
     return discogs_url
 
-
-def get_total_item(username, apikey):
-    # Header for API-Call
-    headers = {
+def get_headers():
+    return {
         'Accept': API_FORMAT,
         'Content-Type': 'application/json',
         'User-Agent': 'discogs2csv'}
-    query = {
+
+def get_query(apikey):
+    return {
         'token': apikey,
         'per_page': API_LIMIT,
         'page': 1}
 
-    collection = []  # creates empty list for collection
+
+def get_total_item(username, apikey):
+    headers = get_headers()
+    query = get_query(apikey)
 
     # get json from API
     session = requests.session()
@@ -50,15 +53,8 @@ def get_total_item(username, apikey):
 
 
 def get_collection(username, apikey):
-    # Header for API-Call
-    headers = {
-        'Accept': API_FORMAT,
-        'Content-Type': 'application/json',
-        'User-Agent': 'discogs2csv'}
-    query = {
-        'token': apikey,
-        'per_page': API_LIMIT,
-        'page': 1}
+    headers = get_headers()
+    query = get_query(apikey)
 
     collection = []  # creates empty list for collection
 
@@ -150,27 +146,15 @@ def get_collection_value(username, apikey):
     value = []  # create empty dictionary
     row = {}
 
-    # Header for API-Call
-    headers = {
-        'Accept': API_FORMAT,
-        'Content-Type': 'application/json',
-        'User-Agent': 'discogs2csv'}
-    query = {
-        'token': apikey,
-        'per_page': API_LIMIT,
-        'page': 1}
+    headers = get_headers()
+    query = get_query(apikey)
 
     # get json from API
     session = requests.session()
     v = session.get(API_BASEURL + '/users/' + username + '/collection/value', params=query, headers=headers)
-    value_min = v.json()['minimum']
-    value_med = v.json()['median']
-    value_max = v.json()['maximum']
-
-    # create list with following values
-    row['minimum'] = value_min
-    row['median'] = value_med
-    row['maximum'] = value_max
+    row['minimum'] = v.json()['minimum']
+    row['median'] = v.json()['median']
+    row['maximum'] = v.json()['maximum']
 
     # merge list in dictionary
     value.append(row)
