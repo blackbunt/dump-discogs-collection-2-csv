@@ -2,7 +2,6 @@ import sys
 sys.path.append('module')
 import url_checker as url_checker
 import get_collection as collection
-import cleanup_strings as clean
 import write_to_file as writefile
 import print as _print
 import menu as _menu
@@ -39,45 +38,39 @@ def fin():
 
 while True:
     _print.title()
-    print('server running on port {}'.format(server.server_port))
-    user_input = _menu.choose()
+    print('Local webserver running on port {}\n'.format(server.server_port))
 
-    if user_input == '0':
-        fin()
-        exit()
+    if url_checker.url_checker(api_discogs):
 
-    # get collection value
-    elif user_input == '1':
-        if url_checker.url_checker(api_discogs):
+        user_input = _menu.choose()
+
+        if user_input == '0':
+            fin()
+            exit()
+
+        # get collection value
+        elif user_input == '1':
             print(collection.get_collection_value(username, apitoken) + "\n")
 
-    # dump collection 2 Excel-File
-    elif user_input == '2':
-        if url_checker.url_checker(api_discogs):
+        # dump collection 2 Excel-File
+        elif user_input == '2':
             _db = collection.get_collection(username, apitoken)
             qr.create_qr(_db, username, apitoken)
             writefile.write_file(_db, 'Excel')
 
-    # dump collection 2 CSV-File
-    elif user_input == '3':
-        if url_checker.url_checker(api_discogs):
+        # dump collection 2 CSV-File
+        elif user_input == '3':
             _db = collection.get_collection(username, apitoken)
             qr.create_qr(_db, username, apitoken)
             writefile.write_file(_db, 'Csv')
 
-    # create qr codes
-    elif user_input == '4':
-        if url_checker.url_checker(api_discogs):
-            print("Connection to Discogs established.")
-
+        # create qr codes
+        elif user_input == '4':
             _db = collection.get_collection(username, apitoken)
             qr.create_qr(_db, username, apitoken)
 
-    # dump cover art
-    elif user_input == '5':
-        if url_checker.url_checker(api_discogs):
-            print("Connection to Discogs established.")
-            print("")
+        # dump cover art
+        elif user_input == '5':
             _db = collection.get_collection(username, apitoken)
             total_items = collection.get_total_item(username, apitoken)
             exist.folder_checker('Cover-Art')
@@ -96,6 +89,6 @@ while True:
                 except:
                     None
 
-            print("All done!")
+            print("All done!\n")
 
-    input("Press Enter to continue...")
+    input("Press Enter to continue...\n")
