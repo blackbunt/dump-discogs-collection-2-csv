@@ -2,6 +2,7 @@
 
 import re
 
+DEBUG = False
 
 def cleanup_artist(artist):  # removes "( digit )"
     artist = re.sub("[(]+[\d+]+[)]+$", "", artist)
@@ -23,7 +24,7 @@ def cleanup_artist_url(artist):  # url-generatrion
 
     artist = re.sub(" ", "-", artist)
 
-    print("artist_url:" + artist)
+    if DEBUG: print("artist_url:" + artist)
     return artist
 
 
@@ -39,14 +40,14 @@ def cleanup_title(title):
 
     title = re.sub("/", "-", title)
 
-    print("title: " + title)
+    if DEBUG: print("title: " + title)
     return title
 
 def cleanup_title_url(title):
 
     title = cleanup_title(title)
 
-    print("cleanup_title: " + title)
+    if DEBUG: print("cleanup_title: " + title)
     
     title = re.sub(" / ", "-", title)
 
@@ -64,7 +65,7 @@ def cleanup_title_url(title):
     if re.search(" ", title):
         title = re.sub(" ", "-", title)
 
-    print("title: " + title)
+    if DEBUG: print("title: " + title)
         
     return title
 
