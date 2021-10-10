@@ -56,5 +56,6 @@ def cleanup_for_url(input):
     input = re.sub("[-]+$", "", input)
     input = re.sub("/", "-", input)
     input = re.sub(" ", "-", input)
+    input = re.sub("#", "", input)
 
     return input
