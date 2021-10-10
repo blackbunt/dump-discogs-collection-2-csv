@@ -13,16 +13,7 @@ def cleanup_artist(artist):  # removes "( digit )"
 def cleanup_artist_url(artist):  # url-generatrion
 
     artist = cleanup_artist(artist)
-
-    artist = re.sub(" / ", "-", artist)
-
-    artist = re.sub("\W+(?![^-])", "-", artist)
-
-    artist = re.sub("[-]+$", "", artist)
-
-    artist = re.sub("/","-", artist)
-
-    artist = re.sub(" ", "-", artist)
+    artist = cleanup_for_url(artist)
 
     if DEBUG: print("artist_url:" + artist)
     return artist
@@ -47,28 +38,23 @@ def cleanup_title_url(title):
 
     title = cleanup_title(title)
 
-    if DEBUG: print("cleanup_title: " + title)
-    
-    title = re.sub(" / ", "-", title)
-
-    title = re.sub("[(]+[\d+]+[)]+$", "", title)
-
-    if re.search("\W+[^-]", title):  # remove unwanted chars
-        title = re.sub("\W+(?![-])", "-", title)
-
-    if re.search("[-]+$", title):
-        title = re.sub("[-]+$", "", title)
-
-    if re.search("/", title):
-        title = re.sub("/", "-", title)
-
-    if re.search(" ", title):
-        title = re.sub(" ", "-", title)
+    title = cleanup_for_url(title)
 
     if DEBUG: print("title: " + title)
         
     return title
 
 def cleanup_styles(styles):
+
     return styles.replace("[","").replace("]","").replace("'","")
 
+
+def cleanup_for_url(input):
+
+    input = re.sub(" / ", "-", input)
+    input = re.sub("\W+(?![^-])", "-", input)
+    input = re.sub("[-]+$", "", input)
+    input = re.sub("/", "-", input)
+    input = re.sub(" ", "-", input)
+
+    return input
