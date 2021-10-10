@@ -16,10 +16,7 @@ HTTPS_BASEURL = "https://www.discogs.com/"
 
 debug_mode = False
 
-def gen_url(artist, album_title, discogs_no):
-
-    artist_url = clean.cleanup_artist_url(artist)
-    title_url = clean.cleanup_title_url(album_title)
+def gen_url(discogs_no):
 
     # Generate Discogs-Url
     discogs_url = HTTPS_BASEURL + "release/" + discogs_no
@@ -117,8 +114,7 @@ def get_collection(username, apikey):
 
             # Generate URL for Webpage and QR code
             try:
-                # row['discogs_webpage'] = gen_url(row['artist'],row['album_title'],row['discogs_no'])
-                row['discogs_webpage'] = gen_url(row['artist'],row['album_title'],row['discogs_no'])
+                row['discogs_webpage'] = gen_url(row['discogs_no'])
                 row['qr_code'] = "http://127.0.0.1:1224/qr/" \
                     + row['discogs_no'] + "_" \
                     + clean.cleanup_artist_url(row['artist']) + "-" \
