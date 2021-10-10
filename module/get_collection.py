@@ -67,17 +67,15 @@ def get_collection(username, apikey):
     total_pages = int(jsondoc['pagination']['pages'])
     total_items = int(jsondoc['pagination']['items'])
     item = 1
-    print("")
-    print("Dumping Collection. This can take some time...")
-    print("Total items in Collection: " + str(total_items))
-    print("")
+    print("\nDumping Collection. This can take some time...\n")
+    print("Total items in Collection: {}\n".format(total_items))
 
     # Initialize json structure
     structure, options, processing = setup_json.set_all()
 
     # for every release in (all) releases create a dictionary and store it in a list
     for page in range(1, total_pages + 1):
-        print("Fetching Page " + str(page) + " of " + str(total_pages))
+        print("Fetching Page {} of {}.".format(page, total_pages))
 
         query = {
             'token': apikey,
@@ -92,7 +90,7 @@ def get_collection(username, apikey):
         for release in releases:
             row = {}  # for every entry in "release" a dictionary
 
-            print("   Fetching item #" + str(item))
+            print("   Fetching item # {}".format(item))
             item += 1
 
             # Iterate over all entries from the json setup and load the data from the server
