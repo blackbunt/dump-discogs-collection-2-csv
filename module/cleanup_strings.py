@@ -1,48 +1,46 @@
 # Cleans up Artist and Title strings for Url Generartion and for .csv file
 
 import re
+import logging
 
-DEBUG = False
+logger = logging.getLogger()
 
 def cleanup_artist(artist):  # removes "( digit )"
-    artist = re.sub("[(]+[\d+]+[)]+$", "", artist)
-    artist = artist.rstrip()
-    return artist
+
+    a = re.sub("[(]+[\d+]+[)]+$", "", artist)
+    a = a.rstrip()
+
+    logger.debug(artist + " -> " + a)
+    return a
 
 
 def cleanup_artist_url(artist):  # url-generatrion
 
-    artist = cleanup_artist(artist)
-    artist = cleanup_for_url(artist)
+    a = cleanup_artist(artist)
+    a = cleanup_for_url(a)
 
-    if DEBUG: print("artist_url:" + artist)
-    return artist
+    logger.debug(artist + " -> " + a)
+    return a
 
 
 def cleanup_title(title):
 
-    title = re.sub(" / ", "-", title)
+    t = re.sub(" / ", "-", title)
+    t = re.sub("[(]+[\d+]+[)]+$", "", t)
+    t = re.sub("\W+(?![^-])", "-", t)
+    t = re.sub("[-]+$", "", t)
+    t = re.sub("/", "-", t)
 
-    title = re.sub("[(]+[\d+]+[)]+$", "", title)
-
-    title = re.sub("\W+(?![^-])", "-", title)
-
-    title = re.sub("[-]+$", "", title)
-
-    title = re.sub("/", "-", title)
-
-    if DEBUG: print("title: " + title)
-    return title
+    logger.debug(title + " -> " + t)
+    return t
 
 def cleanup_title_url(title):
 
-    title = cleanup_title(title)
+    t = cleanup_title(title)
+    t = cleanup_for_url(t)
 
-    title = cleanup_for_url(title)
-
-    if DEBUG: print("title: " + title)
-        
-    return title
+    logger.debug(title + " -> " + t)
+    return t
 
 def cleanup_styles(styles):
 

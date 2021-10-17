@@ -5,7 +5,9 @@ import check_exists as exist
 import cleanup_strings as clean
 import get_collection as collection
 import traceback
+import logging
 
+logger = logging.getLogger()
 
 def create_qr(_db, username, apitoken):
     total_items = collection.get_total_item(username, apitoken)
@@ -18,15 +20,13 @@ def create_qr(_db, username, apitoken):
             discogs_link = str(_db.iloc[item]['discogs_webpage'])
             gen_qr(discogs_link, discogs_no, artist, album_title, item)
         except Exception:
-            print("Unable to create QR code for json-array # {} with album {}".format(item, album_title))
-            traceback.print_exc()
+            logger.error("Unable to create QR code for json-array # {} with album {}".format(item, album_title), info_exc=True)
 
-    print("All done!\n")
+    print("\n\nAll done!\n")
 
 
 def gen_qr(discogs_link, discogs_no, artist, album_title, item='None'):
     exist.folder_checker("qr")
-
 
     # output filename
     filename = discogs_no + "_" + clean.cleanup_artist_url(artist) + "-" + clean.cleanup_title_url(album_title) + ".png"
@@ -40,5 +40,7 @@ def gen_qr(discogs_link, discogs_no, artist, album_title, item='None'):
         im = qr.make_image(qrcode.image.pil.PilImage)
         im.save("qr/" + filename)
 
-    print("Created QR code # {} for '{}-{}'.".format(item+1, artist, album_title))
+    #print("\033[2K\033[1G")
+    print("\r\033[K   # {} - '{}-{}'".format(item+1, artist, album_title), end="")
+    logging.info("Created QR code # {} for '{}-{}'.".format(item+1, artist, album_title))
 

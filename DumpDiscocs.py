@@ -10,6 +10,27 @@ import threading
 import configparser
 import check_exists as exist
 import urllib.request
+import logging
+
+# Basic logging to file
+LOG_FILENAME="debug.log"
+LOG_FORMAT= "[%(levelname)s %(filename)s-%(lineno)s %(funcName)s()] %(message)s"
+logger = logging.getLogger(__name__)
+logging.root.handlers = []
+logging.basicConfig(filename=LOG_FILENAME, format=LOG_FORMAT, level=logging.DEBUG)
+
+# Additional logging of errors to terminal
+console = logging.StreamHandler()
+console.setLevel(logging.ERROR)
+formatter = logging.Formatter(LOG_FORMAT)
+console.setFormatter(formatter)
+logging.getLogger().addHandler(console)
+
+logging.debug('d e b u g')
+logging.info('i n f o')
+logging.warning('w a r n i n g')
+logging.error('e r r o r')
+logging.exception('e x p')
 
 
 config = configparser.ConfigParser()
