@@ -1,0 +1,11 @@
+# Menu Options Configuration
+MainMenu:
+  title: Discogs Library Dumper
+  options: [
+        'Dump Discogs Library to Excel File',
+        'Dump Discogs Library to CSV File',
+        'Show Library Statistics',
+        'Configure Login Data',
+        'Exit'
+    ]
+
