@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# handles menu rendering and menu configuration
+# handles menu rendering and menu config
 from pick import pick
 import yaml
 
@@ -22,7 +22,7 @@ def read_config(file_path):
 
 def show_menu(configuration: dict, def_index=0):
     '''
-    Renders a simple menu from input configuration
+    Renders a simple menu from input config
     :param def_index: position of indicator position, default value == 0
     :param configuration: a dict including a key title (str) and a key options (list)
     :return: list: option, index
@@ -40,7 +40,7 @@ def show_menu(configuration: dict, def_index=0):
 def menu_main(menu_config_yaml: dict):
     '''
     Renders the main menu and execute the chosen options.
-    :param menu_config_yaml: configuration from the menu.yaml key MainMenu
+    :param menu_config_yaml: config from the menu.yaml key MainMenu
     :return: Nothing (Yet)
     '''
     config = menu_config_yaml['MainMenu']

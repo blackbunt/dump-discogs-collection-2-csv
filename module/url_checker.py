@@ -1,3 +1,4 @@
+# obsolete?
 import requests
 
 def url_checker(url):  # check if Url is valid
