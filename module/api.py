@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # handles api calls
 import requests
-from menu import read_config
+from module.menu import read_config
 import os
 
 def get_headers(config: dict):

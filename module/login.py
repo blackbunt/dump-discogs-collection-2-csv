@@ -4,10 +4,10 @@
 import os
 import yaml
 import sys
-from menu import read_config
-from api import login
+from module.menu import read_config
+from module.api import login
 
-
+# dummy code
 def set_state(key: str, state: str, config_path: str):
 
     with open(config_path) as f:
@@ -18,6 +18,14 @@ def set_state(key: str, state: str, config_path: str):
 
 
 def check_login(config_yaml: dict, config_path: str):
+    '''
+    Checks username, apitoken for correctness by contacting discogs api
+    if the given values are not given or incorrect user input is required.
+    The updated values are stored into the config.yaml file and the program reloads itself to reread the config file.
+    :param config_yaml: config dict
+    :param config_path: path to config str
+    :return: bool True, only if success
+    '''
     handler = True
     if config_yaml['Login']['username'] is None: # if username is missing in config
         username: str = input('Please enter your Discogs username: ')
@@ -82,6 +90,7 @@ def check_login(config_yaml: dict, config_path: str):
             raise ConnectionError(f'Connection Error http code: {http_code}')
         else:
             raise BaseException(f'Some Error encountered http code: {http_code}')
+    return True
 
     #elif config_yaml['Login']['username'] is str or config_yaml['Login']['apitoken'] is str:
 
