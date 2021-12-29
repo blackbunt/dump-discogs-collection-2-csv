@@ -3,6 +3,7 @@
 # handles menu rendering and menu config
 from pick import pick
 import yaml
+import os
 
 main_menu: dict = {
     'title': 'Discogs Library Dumper',
@@ -39,6 +40,21 @@ def show_menu(configuration: dict, def_index=0):
     return [option, index]
 
 
+def menu_login_data(menu_config_yaml: dict):
+    '''
+    Renders the Configure Login Data Menu and execute the chosen options.
+    :param menu_config_yaml: config from the menu.yaml key LoginData
+    :return:
+    '''
+    config = menu_config_yaml['LoginData']
+    config.insert(0, 'Back to Main Menu')
+    res = show_menu(config, )
+    if res[0] == 0: # Back to Main Menu
+        menu_main(menu_config_yaml)
+    elif res[0] == 1: # change username
+        pass
+    elif res[0] == 2: # change apitoken
+
 def menu_main(menu_config_yaml: dict):
     '''
     Renders the main menu and execute the chosen options.
@@ -62,4 +78,9 @@ def menu_main(menu_config_yaml: dict):
 
 
 if __name__ == '__main__':
+    #root_dir = os.getcwd()
+    #root_dir = os.path.dirname(root_dir)
+    #configfile = read_config(os.path.join(root_dir, 'config/menu.yaml'))
+    #print(configfile)
+    #menu_main(configfile)
     show_menu(main_menu)
