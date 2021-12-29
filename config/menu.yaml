@@ -11,6 +11,6 @@ MainMenu:
 LoginData:
   title:
   options: [
-        'Change username'
+        'Change username',
         'Change apitoken'
     ]
