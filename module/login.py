@@ -65,7 +65,7 @@ def check_login(config_yaml: dict, config_path: str):
                 f.flush()
                 # rerun script, to read in the config file
                 os.execv(sys.executable, ['python'] + sys.argv)
-        elif http_code == 400 | http_code == 404:
+        elif http_code == 404:
             print('username is invalid.\n')
             print(f'username: {username}')
             username: str = input('Please reenter your Discogs username: ')
