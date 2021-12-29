@@ -75,7 +75,7 @@ def menu_main(menu_config_yaml: dict):
     elif res[0] == 2:  # Run Show Library Statistics
         pass
     elif res[0] == 3:  # Configure Login Data
-        pass
+        menu_login_data(menu_config_yaml)
     elif res[0] == 4:  # Exit Program
         exit()
     else:
