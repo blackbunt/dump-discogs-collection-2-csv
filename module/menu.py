@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # handles menu rendering and menu config
 from pick import pick
+from keyboard import wait
 import yaml
 import os
 
@@ -54,6 +55,10 @@ def menu_login_data(menu_config_yaml: dict):
     elif res[0] == 1: # change username
         pass
     elif res[0] == 2: # change apitoken
+        pass
+    else:
+        raise RuntimeError('Should not be able to be here!')
+
 
 def menu_main(menu_config_yaml: dict):
     '''
