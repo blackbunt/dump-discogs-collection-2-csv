@@ -4,8 +4,10 @@
 import os
 import yaml
 import sys
+from keyboard import wait
 from module.menu import read_config
 from module.api import login
+
 
 # dummy code
 def set_state(key: str, state: str, config_path: str):
@@ -15,6 +17,47 @@ def set_state(key: str, state: str, config_path: str):
     doc['state'] = state
     with open(config_path, 'w') as f:
         yaml.safe_dump(doc, f, default_flow_style=False)
+
+
+def restart(f):
+    # flush opened files
+    f.flush()
+    # rerun script, to read in the config file
+    os.execv(sys.executable, ['python'] + sys.argv)
+
+
+def chg_username(config_path: str, username: str,):
+    '''
+    enters or changes username in config.yaml
+    :param config_path: file path to config.yaml
+    :param username: entered username
+    :return:
+    '''
+    with open(config_path) as f:
+        doc = yaml.safe_load(f)
+    doc['Login']['username'] = username
+    with open(config_path, 'w') as f:
+        yaml.safe_dump(doc, f, default_flow_style=False)
+        print(f'Username {username} successfully set.\n\nContinue with Enter...')
+        wait('Enter')  # Wait until user hits enter
+        restart(f)
+
+
+def chg_apitoken(config_path: str, apitoken: str,):
+    '''
+    enters or changes apitoken in config.yaml
+    :param config_path: file path to config.yaml
+    :param apitoken: entered apitoken
+    :return:
+    '''
+    with open(config_path) as f:
+        doc = yaml.safe_load(f)
+    doc['Login']['apitoken'] = apitoken
+    with open(config_path, 'w') as f:
+        yaml.safe_dump(doc, f, default_flow_style=False)
+        print(f'Apitoken {apitoken} successfully set.\n\nContinue with Enter...')
+        wait('Enter')  # Wait until user hits enter
+        restart(f)
 
 
 def check_login(config_yaml: dict, config_path: str):
@@ -29,29 +72,13 @@ def check_login(config_yaml: dict, config_path: str):
     handler = True
     if config_yaml['Login']['username'] is None: # if username is missing in config
         username: str = input('Please enter your Discogs username: ')
-        with open(config_path) as f:
-            doc = yaml.safe_load(f)
-        doc['Login']['username'] = username
-        with open(config_path, 'w') as f:
-            yaml.safe_dump(doc, f, default_flow_style=False)
-            # flush opened files
-            f.flush()
-            # rerun script, to read in the config file
-            os.execv(sys.executable, ['python'] + sys.argv)
+        chg_username(config_path, username)
     else: # if available in config
         username = config_yaml['Login']['username']
 
     if config_yaml['Login']['apitoken'] is None: # if apitoken is missing in config
         apitoken: str = input('Please enter your Discogs apitoken: ')
-        with open(config_path) as f:
-            doc = yaml.safe_load(f)
-        doc['Login']['apitoken'] = apitoken
-        with open(config_path, 'w') as f:
-            yaml.safe_dump(doc, f, default_flow_style=False)
-            # flush opened files
-            f.flush()
-            # rerun script, to read in the config file
-            os.execv(sys.executable, ['python'] + sys.argv)
+        chg_apitoken(config_path, apitoken)
     else: # if available in config
         apitoken = config_yaml['Login']['apitoken']
 
@@ -64,28 +91,12 @@ def check_login(config_yaml: dict, config_path: str):
             print('apitoken is invalid.\n')
             print(f'apitoken: {apitoken}\n')
             apitoken: str = input('Please reenter your Discogs apitoken: ')
-            with open(config_path) as f:
-                doc = yaml.safe_load(f)
-            doc['Login']['apitoken'] = apitoken
-            with open(config_path, 'w') as f:
-                yaml.safe_dump(doc, f, default_flow_style=False)
-                # flush opened files
-                f.flush()
-                # rerun script, to read in the config file
-                os.execv(sys.executable, ['python'] + sys.argv)
+            chg_apitoken(config_path, apitoken)
         elif http_code == 404:
             print('username is invalid.\n')
             print(f'username: {username}')
             username: str = input('Please reenter your Discogs username: ')
-            with open(config_path) as f:
-                doc = yaml.safe_load(f)
-            doc['Login']['username'] = username
-            with open(config_path, 'w') as f:
-                yaml.safe_dump(doc, f, default_flow_style=False)
-                # flush opened files
-                f.flush()
-                # rerun script, to read in the config file
-                os.execv(sys.executable, ['python'] + sys.argv)
+            chg_username(config_path, username)
         elif http_code == 502 | 503:
             raise ConnectionError(f'Connection Error http code: {http_code}')
         else:
