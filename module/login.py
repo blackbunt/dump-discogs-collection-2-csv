@@ -3,18 +3,33 @@
 # handles login data and checks if they are correct by logging into discogs
 import os
 import yaml
+import os
 import sys
+import psutil
+import logging
 from keyboard import wait
 import config
 import module.api as api
 import module.menu as menu
 
 
-def restart(f):
-    # flush opened files
-    f.flush()
-    # rerun script, to read in the config file
-    os.execv(sys.executable, ['python'] + sys.argv)
+
+
+def restart(message: str):
+    """Restarts the current program, with file objects and descriptors
+       cleanup
+    """
+    try:
+        p = psutil.Process(os.getpid())
+        for handler in p.get_open_files() + p.connections():
+            os.close(handler.fd)
+    except Exception as e:
+        pass
+    print(message + '\n\nPlease restart Program.\n\n Continue with >Enter<')
+    wait('Enter')
+    exit()
+    #python = sys.executable
+    #os.execlp(python, python, *sys.argv)
 
 
 def chg_username(config_path: str, username: str, show_menu: bool):
@@ -29,14 +44,18 @@ def chg_username(config_path: str, username: str, show_menu: bool):
         doc = yaml.safe_load(f)
     doc['Login']['username'] = username
     if show_menu:
-        res = menu.menu_yes_no(f'Username: {username}. Change it?')
+        res = menu.menu_yes_no(f'Username: {username} \n\nChange it?')
         if res[1] == 1:
             return 1
+        else:
+            username = input('Please input new username: ')
+
     with open(config_path, 'w') as f:
+        doc['Login']['username'] = username
         yaml.safe_dump(doc, f, default_flow_style=False)
-        print(f'Username {username} successfully set.\n\nContinue with Enter...')
-        wait('Enter')  # Wait until user hits enter
-        restart(f)
+        #print(f'Username {username} successfully set.\n\nContinue with Enter...')
+        #wait('Enter')  # Wait until user hits enter
+        restart(f"Username '{username}' set.'")
 
 
 def chg_apitoken(config_path: str, apitoken: str, show_menu: bool):
@@ -51,17 +70,20 @@ def chg_apitoken(config_path: str, apitoken: str, show_menu: bool):
         doc = yaml.safe_load(f)
     doc['Login']['apitoken'] = apitoken
     if show_menu:
-        res = menu.menu_yes_no(f'Username: {apitoken}. Change it?')
+        res = menu.menu_yes_no(f"Apitoken:\n\n{apitoken} \n\nChange it?")
         if res[1] == 1:
             return 1
+        else:
+            apitoken = input(f'Please input new apitoken: ')
     with open(config_path, 'w') as f:
+        doc['Login']['apitoken'] = apitoken
         yaml.safe_dump(doc, f, default_flow_style=False)
         print(f'Apitoken {apitoken} successfully set.\n\nContinue with Enter...')
         wait('Enter')  # Wait until user hits enter
-        restart(f)
+        restart(f"Apitoken '{apitoken}' set.'")
 
 
-def check_login(config_yaml: dict, config_path: str):
+def check_login(config_yaml: dict, config_path: str, **kwargs):
     """
     Checks username, apitoken for correctness by contacting discogs api
     if the given values are not given or incorrect user input is required.
@@ -85,6 +107,9 @@ def check_login(config_yaml: dict, config_path: str):
 
     while handler:
         # check if login is valid by login into discogs
+        if kwargs:
+            username = kwargs.get('username')
+            apitoken = kwargs.get('apitoken')
         http_code = api.login_api(username, apitoken, config_yaml)
         if http_code == 200:
             break
@@ -93,15 +118,15 @@ def check_login(config_yaml: dict, config_path: str):
             print(f'apitoken: {apitoken}\n')
             apitoken: str = input('Please reenter your Discogs apitoken: ')
             chg_apitoken(config_path, apitoken, False)
-        elif http_code == 404:
+        elif http_code == 404 or http_code == 403:
             print('username is invalid.\n')
             print(f'username: {username}')
             username: str = input('Please reenter your Discogs username: ')
             chg_username(config_path, username, False)
-        elif http_code == 502 | 503:
+        elif http_code == 502 or http_code == 503:
             raise ConnectionError(f'Connection Error http code: {http_code}')
         else:
-            raise BaseException(f'Some Error encountered http code: {http_code}')
+            print(f'Some Error encountered http code: {http_code}')
     return True
 
     # elif config_yaml['Login']['username'] is str or config_yaml['Login']['apitoken'] is str:
