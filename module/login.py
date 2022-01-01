@@ -25,11 +25,11 @@ def restart(message: str):
             os.close(handler.fd)
     except Exception as e:
         pass
-    print(message + '\n\nPlease restart Program.\n\n Continue with >Enter<')
-    wait('Enter')
-    exit()
-    #python = sys.executable
-    #os.execlp(python, python, *sys.argv)
+    #print(message + '\n\nPlease restart Program.\n\n Continue with >Enter<')
+    #wait('Enter')
+    #exit()
+    python = sys.executable
+    os.execlp(python, python, *sys.argv)
 
 
 def chg_username(config_path: str, username: str, show_menu: bool):
@@ -53,8 +53,7 @@ def chg_username(config_path: str, username: str, show_menu: bool):
     with open(config_path, 'w') as f:
         doc['Login']['username'] = username
         yaml.safe_dump(doc, f, default_flow_style=False)
-        #print(f'Username {username} successfully set.\n\nContinue with Enter...')
-        #wait('Enter')  # Wait until user hits enter
+        menu.clear_scr()
         restart(f"Username '{username}' set.'")
 
 
