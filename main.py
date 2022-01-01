@@ -7,7 +7,9 @@ import sys
 
 CONFIG_PATH = os.path.join(os.getcwd(), 'config/config.yaml')
 MENU_PATH = os.path.join(os.getcwd(), 'config/menu.yaml')
-# load general config file
+# clear output window
+#menu.clear_scr()
+# load general config files
 # global gen_config
 gen_config = config.read_config(CONFIG_PATH)
 # load menu config file
