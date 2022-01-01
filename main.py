@@ -13,9 +13,7 @@ config = menu.read_config(CONFIG_PATH)
 # load menu config file
 menus = menu.read_config(MENU_PATH)
 
-
-
-# check if logindata exists
+# check if logindata exists/connection is possible
 if not login.check_login(config, CONFIG_PATH):
     sys.exit('Connection to Discogs not possible.\nNo Network Connection?')
 menu.menu_main(menus)
