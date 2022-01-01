@@ -20,12 +20,12 @@ main_menu: dict = {
 }
 
 
-def clear_out():
+def clear_scr():
     system = platform.system()
-    if platform == 'Windows':
+    if system == 'Windows':
         clear = lambda: os.system('cls')
         clear
-    elif platform == 'Linux' or platform == 'Darwin':
+    elif system == 'Linux' or platform == 'Darwin':
         clear = lambda: os.system('clear')
         clear()
     else:
