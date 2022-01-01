@@ -22,19 +22,19 @@ def get_query(conf: dict):
     :param conf: config dict
     :return: query dict
     """
-    api_token = conf['Login']['apitoken']
+    token = conf['Login']['apitoken']
     params = conf['API']['params']
 
-    token_key = conf['API']['params']
-    token_key = list(token_key.keys())[2]
+    conf_query = conf['API']['params']
+    token_key = list(conf_query.keys())[2]
     params.pop('token', None)
-    token_entry = {token_key: api_token}
+    token_entry = {token_key: token}
     # merge dicts
     query = params | token_entry
     return query
 
 
-def login_api(conf: dict):
+def login_api(user: str, token: str, conf: dict):
     """
     Generates a request to test the login credentials
     :param conf: configfile
