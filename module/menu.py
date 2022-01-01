@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# handles menu rendering and menu config
+"""
+renders menus from menu.yaml
+"""
 from pick import pick
 from keyboard import wait
 import os
@@ -8,6 +10,7 @@ import platform
 import module.login as login
 import config
 
+#test dict
 main_menu: dict = {
     'title': 'Discogs Library Dumper',
     'options': [

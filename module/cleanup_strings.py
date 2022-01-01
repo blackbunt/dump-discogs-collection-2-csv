@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 This module cleans up artist and release title strings for file creation as XLS and CSV. It also does additional
 adjustments for URL-generation.

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# handles login data and checks if they are correct by logging into discogs
+"""
+handles login data and checks if they are correct by connecting to discogs api
+"""
 import os
 import yaml
 import os

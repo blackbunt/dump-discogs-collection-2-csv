@@ -1,6 +1,7 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# handles general config stuff
+"""
+handles general config stuff
+"""
 import yaml
 
 

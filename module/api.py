@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# handles api calls
+"""
+handles api calls
+"""
 import requests
 import config
 import os
+
 
 
 def get_headers(conf: dict):
@@ -51,6 +54,25 @@ def login_api(user: str, token: str, conf: dict):
     http_code = res.status_code
     return http_code
 
+
+def get_info_api(conf: dict):
+    """
+    Generates a request to dump the collection info of user
+    :param conf: configfile
+    :return: json data
+    """
+    url = conf['API']['value_url']
+    url = url.replace('{username}', conf['Login']['username'])
+    res = requests.request(
+        'GET',
+        url,
+        params=get_query(conf),
+        headers=get_headers(conf),
+    )
+    if res.status_code == 200:
+        pass
+    else:
+        raise ConnectionError
 
 if __name__ == '__main__':
     root_dir = os.getcwd()
