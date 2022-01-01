@@ -4,6 +4,7 @@
 from pick import pick
 from keyboard import wait
 import os
+import platform
 import module.login as login
 import config
 
@@ -17,6 +18,19 @@ main_menu: dict = {
         'Exit'
     ]
 }
+
+
+def clear_out():
+    system = platform.system()
+    if platform == 'Windows':
+        clear = lambda: os.system('cls')
+        clear
+    elif platform == 'Linux' or platform == 'Darwin':
+        clear = lambda: os.system('clear')
+        clear()
+    else:
+        pass
+    return None
 
 
 def not_implemented_yet():
