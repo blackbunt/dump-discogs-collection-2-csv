@@ -9,7 +9,7 @@ MainMenu:
         'Exit'
     ]
 LoginData:
-  title:
+  title: Configure Login Data
   options: [
         'Change username',
         'Change apitoken'
