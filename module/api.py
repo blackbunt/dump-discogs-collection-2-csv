@@ -2,54 +2,62 @@
 # -*- coding: utf-8 -*-
 # handles api calls
 import requests
-from module.menu import read_config
+import config
 import os
 
-def get_headers(config: dict):
-    '''
+
+def get_headers(conf: dict):
+    """
     Build the header for the request
-    :param config: config dict
+    :param conf: config dict
     :return: headers dict
-    '''
-    headers = config['API']['headers']
+    """
+    headers = conf['API']['headers']
     return headers
 
 
-def get_query(config: dict):
-    '''
+def get_query(conf: dict):
+    """
     Build the query for the request
-    :param config: config dict
+    :param conf: config dict
     :return: query dict
-    '''
-    apitoken = config['Login']['apitoken']
-    params = config['API']['params']
+    """
+    api_token = conf['Login']['apitoken']
+    params = conf['API']['params']
 
-    token_key = config['API']['params']
+    token_key = conf['API']['params']
     token_key = list(token_key.keys())[2]
     params.pop('token', None)
-    token_entry = {token_key: apitoken}
+    token_entry = {token_key: api_token}
     # merge dicts
     query = params | token_entry
     return query
 
 
-def login(username: str, apitoken: str, config: dict):
-    url = config['API']['release_url']
-    url = url.replace('{username}', config['Login']['username'])
+def login_api(conf: dict):
+    """
+    Generates a request to test the login credentials
+    :param conf: configfile
+    :return: http code int
+    """
+    url = conf['API']['release_url']
+    url = url.replace('{username}', conf['Login']['username'])
     res = requests.request(
         'GET',
         url,
-        params=get_query(config),
-        headers=get_headers(config),
+        params=get_query(conf),
+        headers=get_headers(conf),
     )
     http_code = res.status_code
     return http_code
 
+
 if __name__ == '__main__':
     root_dir = os.getcwd()
     root_dir = os.path.dirname(root_dir)
-    config = read_config(os.path.join(root_dir, 'config/config.yaml'))
+    configfile = config.read_config(os.path.join(root_dir, 'config/config.yaml'))
+    # noinspection PyUnresolvedReferences
     username = config['Login']['username']
-    apitoken = config['Login']['apitoken']
-    print(login(username, apitoken, config))
-
+    # noinspection PyUnresolvedReferences
+    token = config['Login']['apitoken']
+    print(login_api(configfile))
