@@ -9,6 +9,7 @@ import os
 import platform
 import module.login as login
 import config
+import collection
 
 #test dict
 main_menu: dict = {
@@ -133,7 +134,7 @@ def menu_main(menu_config_yaml: dict, gen_config_yaml: dict, gen_config_path):
     elif res[1] == 1:  # Run Data Dump 2 CSV File
         not_implemented_yet()
     elif res[1] == 2:  # Run Show Library Statistics
-        not_implemented_yet()
+        menu_statistics(menu_config_yaml, gen_config_yaml, gen_config_path)
     elif res[1] == 3:  # Configure Login Data
         menu_login_data(menu_config_yaml, gen_config_yaml, gen_config_path)
     elif res[1] == 4:  # Exit Program
@@ -142,12 +143,36 @@ def menu_main(menu_config_yaml: dict, gen_config_yaml: dict, gen_config_path):
         exit()
 
 
+def menu_statistics(menu_config_yaml: dict, gen_config_yaml: dict, gen_config_path):
+    """
+    Renders the statistics menu and the statistics data.
+    :param gen_config_path:
+    :param gen_config_yaml: config from the config.yaml
+    :param menu_config_yaml: config from the menu.yaml key MainMenu
+    :return: Nothing (Yet)
+    """
+
+    text = collection.setup_value_data(gen_config_yaml)
+    title = ''
+    for index in range(0, len(text)):
+        title = title + f'{text[index]}\n'
+    conf = {
+        'title': 'Show Library Statistics\n\n' + title,
+        'options': ['Back to Main Menu']
+    }
+    res = show_menu(conf, 0, True)
+    if res[1] == 0:
+        menu_main(menu_config_yaml, gen_config_yaml, gen_config_path)
+    else:
+        raise RuntimeError
+
+
 if __name__ == '__main__':
     root_dir = os.getcwd()
     root_dir = os.path.dirname(root_dir)
     menu_configfile = config.read_config(os.path.join(root_dir, 'config/menu.yaml'))
     gen_configfile = config.read_config(os.path.join(root_dir, 'config/config.yaml'))
     # print(configfile)
-    menu_main(menu_configfile, gen_configfile, 'config/config.yaml')
+    menu_statistics(menu_configfile, gen_configfile, 'config/config.yaml')
 
     # menu_login_data(configfile)
