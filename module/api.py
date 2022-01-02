@@ -31,19 +31,35 @@ def get_query(conf: dict, **kwargs):
     if kwargs:
         page = kwargs.get('page')
         per_page = conf['API']['limit']
-        query = {
+        conf_query = {
             'token': token,
             'page': page,
             'per_page': per_page
         }
     else:
         conf_query = conf['API']['params']
-        token_key = list(conf_query.keys())[2]
-        params.pop('token', None)
-        token_entry = {token_key: token}
-        # merge dicts
-        query = params | token_entry
-    return query
+        conf_query['token'] = token
+    return conf_query
+
+
+def get_collection_info(conf: dict):
+    """
+    Generates a request to extract general information about the collection
+    :param conf: configfile
+    :return: json data
+    """
+    url = conf['API']['release_url']
+    url = url.replace('{username}', conf['Login']['username'])
+    res = requests.request(
+        'GET',
+        url,
+        params=get_query(conf),
+        headers=get_headers(conf),
+    )
+    if res.status_code == 200:
+        return json.loads(res.text.encode('utf-8'))
+    else:
+        raise ConnectionError
 
 
 def login_api(user: str, token: str, conf: dict):
@@ -66,13 +82,24 @@ def login_api(user: str, token: str, conf: dict):
 
 def get_info_api(conf: dict):
     """
-    Generates a request to dump the collection value of user
-    :param conf:
+    Generates a request to dump the collection of user
+    :param page:
+    :param conf: configfile
     :return: json and header info
     """
     url = conf['API']['release_url']
     url = url.replace('{username}', conf['Login']['username'])
     limit = conf['API']['limit']
+    res = requests.request(
+        'GET',
+        url,
+        params=get_query(conf),
+        headers=get_headers(conf),
+    )
+    if res.status_code == 200:
+        return json.loads(res.text.encode('utf-8'))
+    else:
+        raise ConnectionError
 
 
 def get_value_api(conf: dict):
