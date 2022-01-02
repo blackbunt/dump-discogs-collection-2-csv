@@ -42,9 +42,33 @@ def get_query(conf: dict, **kwargs):
     return conf_query
 
 
-def get_collection_info(conf: dict):
+def gen_url(conf: dict):
+    """
+    Generates a list containing the Download URLs
+    :param conf:
+    :return: list
+    """
+    liste = []
+    url = conf['API']['processing_url']
+    url = url.replace('{username}', conf['Login']['username'])
+    url = url.replace('{per_page}', str(conf['API']['scrape']['per_page']))
+    url = url.replace('{token}', conf['Login']['apitoken'])
+    res = requests.get(url)
+    res = json.loads(res.text.encode('utf-8'))
+    api_json = res['pagination']
+    total_items = api_json['items']
+    pages = api_json['pages']
+    per_page = api_json['per_page']
+    for item in range(1, pages):
+        url = url.replace('{page}', str(item))
+        liste.append(url)
+    return liste, total_items, pages, per_page
+
+
+def get_collection(conf: dict, page: int):
     """
     Generates a request to extract general information about the collection
+    :param page: desired page
     :param conf: configfile
     :return: json data
     """
@@ -53,13 +77,16 @@ def get_collection_info(conf: dict):
     res = requests.request(
         'GET',
         url,
-        params=get_query(conf),
+        params=get_query(conf, page = page),
         headers=get_headers(conf),
     )
-    if res.status_code == 200:
-        return json.loads(res.text.encode('utf-8'))
-    else:
-        raise ConnectionError
+    calls_left = res.headers['X-Discogs-Ratelimit-Remaining']
+    #if res.status_code == 200:
+    #    data = json.loads(res.text.encode('utf-8'))
+
+    return calls_left, res,
+    #else:
+        #return calls_left, res.status_code
 
 
 def login_api(user: str, token: str, conf: dict):
@@ -82,7 +109,7 @@ def login_api(user: str, token: str, conf: dict):
 
 def get_info_api(conf: dict):
     """
-    Generates a request to dump the collection of user
+    Generates a request to extract general information about the collection
     :param page:
     :param conf: configfile
     :return: json and header info
@@ -130,4 +157,8 @@ if __name__ == '__main__':
     username = configfile['Login']['username']
     # noinspection PyUnresolvedReferences
     token = configfile['Login']['apitoken']
-    print(get_value_api(configfile))
+    params = get_query(configfile, page = 1)
+    #for _ in range(0, 100):
+     #   res = get_collection(configfile, 1)[0]
+      #  print(res)
+    print(gen_url(configfile))
