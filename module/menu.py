@@ -3,13 +3,15 @@
 """
 renders menus from menu.yaml
 """
-from pick import pick
-from keyboard import wait
 import os
 import platform
-import module.login as login
+
+from keyboard import wait
+from pick import pick
+
 import config
-import collection
+import module.collection as collection
+import module.login as login
 
 #test dict
 main_menu: dict = {
