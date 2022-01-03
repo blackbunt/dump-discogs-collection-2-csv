@@ -60,8 +60,10 @@ def gen_url(conf: dict):
     pages = api_json['pages']
     per_page = api_json['per_page']
     for item in range(1, pages):
-        url = url.replace('{page}', str(item))
-        liste.append(url)
+        url_new = url
+        url_new = url_new.replace('{page}', str(item))
+        liste.append(url_new)
+
     return liste, total_items, pages, per_page
 
 
