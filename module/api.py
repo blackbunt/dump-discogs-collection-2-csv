@@ -59,7 +59,7 @@ def gen_url(conf: dict):
     total_items = api_json['items']
     pages = api_json['pages']
     per_page = api_json['per_page']
-    for item in range(1, pages):
+    for item in range(1, pages + 1):
         url_new = url
         url_new = url_new.replace('{page}', str(item))
         liste.append(url_new)
