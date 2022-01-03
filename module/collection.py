@@ -152,8 +152,8 @@ def get_release_data(listManager = None, links_pokemon = None, process = 0):
 
 def get_collection_data(config_yaml: dict,):
     # cannot be 0, so max(NUMBER,1) solves this
-    #workers = max(cpu_count() - 1, 1)
-    workers = 1
+    workers = max(cpu_count() - 1, 1)
+    #workers = 1
     # create the pool
     manager = Manager()
 
