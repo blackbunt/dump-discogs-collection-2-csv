@@ -9,6 +9,7 @@ import time
 import traceback
 from functools import partial
 from multiprocessing import Pool, Manager, cpu_count
+from itertools import chain
 
 import pandas as pd
 import requests
@@ -146,7 +147,7 @@ def get_release_data(listManager = None, links_pokemon = None, process = 0):
     finally:
         if collection != None:
             listManager.append(collection)
-            time.sleep(0.5)
+            #time.sleep(0.5)
             return
 
 
@@ -168,7 +169,10 @@ def get_collection_data(config_yaml: dict,):
         #         could do this the below is visualize the rate success /etc
         #         pool.imap(part_get_clean_pokemon, list(range(0, len(links_pokemon))))
         #         using tqdm to see progress imap works
-        for _ in tqdm(pool.imap(part_get_clean_pokemon, list(range(0, len(links_pokemon)))), total=len(links_pokemon), desc=f'Scraping Discogs. Total items: {total_items} in blocks of {per_page}', unit='Blocks'):
+        for _ in tqdm(pool.imap(part_get_clean_pokemon, list(range(0, len(links_pokemon)))), total=len(links_pokemon),
+                      desc=f'Scraping Discogs. Total items: {total_items} in blocks of {per_page}', unit='Blocks',
+                      colour='yellow'):
+
             pass
         pool.close()
         pool.join()
@@ -176,10 +180,13 @@ def get_collection_data(config_yaml: dict,):
         pool.close()
         pool.join()
 
-    collection_list = list(listManager)
+
+    collection_list = list(chain.from_iterable(listManager))
+
+
 
     df_collection = pd.DataFrame(collection_list)
-    #df_pokemon.sort_values(['id'], inplace=True)
+    df_collection.sort_values(['date_added'], )
     return df_collection
 
 
