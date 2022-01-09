@@ -51,20 +51,25 @@ def gen_url(conf: dict, **kwargs):
     liste = []
     url = conf['API']['processing_url']
     url = url.replace('{username}', conf['Login']['username'])
-
-    url = url.replace('{token}', conf['Login']['apitoken'])
-    res = requests.get(url)
-    res = json.loads(res.text.encode('utf-8'))
-    api_json = res['pagination']
-    total_items = api_json['items']
-    pages = api_json['pages']
-    #per_page = api_json['per_page']
     if kwargs:
         per_page = kwargs.get('per_page')
         url = url.replace('{per_page}', str(per_page))
+        url = url.replace('{token}', conf['Login']['apitoken'])
+        res = requests.get(url)
+        res = json.loads(res.text.encode('utf-8'))
+        api_json = res['pagination']
+        total_items = api_json['items']
+        pages = api_json['pages']
+
     else:
+        url = url.replace('{token}', conf['Login']['apitoken'])
+        res = requests.get(url)
+        res = json.loads(res.text.encode('utf-8'))
+        api_json = res['pagination']
         per_page = api_json['per_page']
-        url = url.replace('{per_page}', str(conf['API']['scrape']['per_page']))
+        total_items = api_json['items']
+        pages = api_json['pages']
+
     for item in range(1, pages + 1):
         url_new = url
         url_new = url_new.replace('{page}', str(item))
@@ -85,16 +90,16 @@ def get_collection(conf: dict, page: int):
     res = requests.request(
         'GET',
         url,
-        params=get_query(conf, page = page),
+        params=get_query(conf, page=page),
         headers=get_headers(conf),
     )
     calls_left = res.headers['X-Discogs-Ratelimit-Remaining']
-    #if res.status_code == 200:
+    # if res.status_code == 200:
     #    data = json.loads(res.text.encode('utf-8'))
 
     return calls_left, res,
-    #else:
-        #return calls_left, res.status_code
+    # else:
+    # return calls_left, res.status_code
 
 
 def login_api(user: str, token: str, conf: dict):
@@ -165,8 +170,8 @@ if __name__ == '__main__':
     username = configfile['Login']['username']
     # noinspection PyUnresolvedReferences
     token = configfile['Login']['apitoken']
-    params = get_query(configfile, page = 1)
-    #for _ in range(0, 100):
-     #   res = get_collection(configfile, 1)[0]
-      #  print(res)
+    params = get_query(configfile, page=1)
+    # for _ in range(0, 100):
+    #   res = get_collection(configfile, 1)[0]
+    #  print(res)
     print(gen_url(configfile))
