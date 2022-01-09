@@ -10,6 +10,7 @@ from multiprocessing import cpu_count
 import math
 import module.collection as collection
 
+
 def benchmark_per_page(config_yaml: str):
     """
     Returns possible per_page settings for api call without exceeding api limit. Only works with collections smaller than 6000 items.
@@ -18,9 +19,8 @@ def benchmark_per_page(config_yaml: str):
     :return:
     """
     # get no of items in collection
-    #no = api.get_info_api(config_yaml)['pagination']['items']
-    no = 2421
-
+    no = api.get_info_api(config_yaml)['pagination']['items']
+    #no = 240
 
     # upper treshold
     upper = 100
@@ -30,7 +30,7 @@ def benchmark_per_page(config_yaml: str):
     # if collection size exceeds Api Limit than return 100
     if lower >= upper:
         return [100]
-        #print(f'{no} equal -> 100')
+        # print(f'{no} equal -> 100')
     else:
         div = upper
         handler = True
@@ -42,7 +42,8 @@ def benchmark_per_page(config_yaml: str):
                 if not res * 60 < no:
                     if not res > 100:
                         # print(res, mod)
-                        liste.append(res)
+                        if res not in liste:
+                            liste.append(res)
             if div == lower:
                 break
             div -= 1
@@ -56,7 +57,7 @@ if __name__ == '__main__':
     root_dir = os.getcwd()
     root_dir = os.path.dirname(root_dir)
     configfile = config.read_config(os.path.join(root_dir, 'config/config.yaml'))
-    #print(max(cpu_count() - 1, 1))
+    # print(max(cpu_count() - 1, 1))
     print(benchmark_per_page(configfile))
-    #res = test(configfile)
-    #print(res)
+    # res = test(configfile)
+    # print(res)
