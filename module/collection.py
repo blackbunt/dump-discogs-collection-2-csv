@@ -209,6 +209,31 @@ def get_collection_data(config_yaml: dict, **kwargs):
     manager.shutdown()
     return df_collection, elapsed
 
+def run_benchmark(config_yaml: str):
+    dict = {}
+    res = benchmark.benchmark_per_page(configfile)
+    print(res)
+    print('wait for api time reset')
+    time.sleep(60)
+
+    togo = len(res)
+    time_left = len(res) * 60
+    for entry in res:
+        elapsed = get_collection_data(configfile, per_page=entry)[1]
+        dict[entry] = elapsed
+        togo -= togo
+        time_left = time_left - 60
+        print(f'just ca. {time_left / 60} minutes to go!')
+        print(entry, elapsed)
+        print(' wait a minute...')
+
+        time.sleep(61)
+    min_val = min(dict.items(), key=lambda x: x[1])
+    #print(dict)
+    #print(min_val)
+    print(f'Optimal settings:\nper page: {min_val[0]}\nest. time: {min_val[1]} sec.')
+    return min_val[0]
+
 
 if __name__ == '__main__':
     root_dir = os.getcwd()
@@ -224,9 +249,13 @@ if __name__ == '__main__':
     #write_to_file.write_file(res, 'Excel')
 
     # benchmark
+    #dict = {4: 22.18367600440979, 5: 11.012670040130615, 6: 37.60151791572571, 8: 13.83693814277649, 10: 6.8414952754974365, 12: 10.590538740158081, 15: 5.543498754501343, 16: 6.0455851554870605, 18: 7.157623291015625, 20: 5.590988636016846, 24: 4.8190929889678955, 30: 6.920377254486084, 35: 6.198363304138184, 40: 7.531091213226318, 48: 8.57279372215271, 60: 9.31027603149414}
     dict = {}
     res = benchmark.benchmark_per_page(configfile)
     print(res)
+    print('wait for api time reset')
+    time.sleep(60)
+
     togo = len(res)
     time_left = len(res) * 60
     for entry in res:
@@ -241,4 +270,4 @@ if __name__ == '__main__':
         time.sleep(61)
     min_val = min(dict.items(), key=lambda x: x[1])
     print(dict)
-    print(min_val)
+    print(f'Optimal settings:\nper page: {min_val[0]}\nest. time: {min_val[1]} sec.')
