@@ -168,8 +168,11 @@ def get_release_data(list_manager=None, links_discogs=None, process=0):
             return
 
 
-# initializer for SyncManager
 def mgr_init():
+    """
+    initializer for SyncManager
+    :return: Nating sasa ke
+    """
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 
@@ -371,14 +374,16 @@ def menu_main(menu_config_yaml: dict, gen_config_yaml: dict, gen_config_path):
     config_file = menu_config_yaml['MainMenu']
     res = show_menu(config_file, 0)
     if res[1] == 0:  # Run Data Dump 2 Excel File
-        test(gen_config_yaml)
-        # data, time = collection.get_collection_data(gen_config_yaml)
-        # write_to_file.write_file(data, 'Excel')
+        setup_json.set_json()
+        setup_json.set_all()
+        clear_scr()
+        data, est_time = get_collection_data(gen_config_yaml)
+        write_to_file.write_file(data, 'Excel')
         menu_main(menu_config_yaml, gen_config_yaml, gen_config_path)
-        # print(time)
     elif res[1] == 1:  # Run Data Dump 2 CSV File
         setup_json.set_json()
         setup_json.set_all()
+        clear_scr()
         data, est_time = get_collection_data(gen_config_yaml)
         write_to_file.write_file(data, 'Csv')
         menu_main(menu_config_yaml, gen_config_yaml, gen_config_path)
@@ -390,11 +395,6 @@ def menu_main(menu_config_yaml: dict, gen_config_yaml: dict, gen_config_path):
         exit()
     else:
         exit()
-
-
-def test(gen_config_yaml: dict):
-    data, est_time = get_collection_data(gen_config_yaml)
-    write_to_file.write_file(data, 'Excel')
 
 
 def menu_statistics(menu_config_yaml: dict, gen_config_yaml: dict, gen_config_path):
@@ -422,9 +422,9 @@ def menu_statistics(menu_config_yaml: dict, gen_config_yaml: dict, gen_config_pa
 
 
 if __name__ == '__main__':
-    #root_dir = os.getcwd()
-    #root_dir = os.path.dirname(root_dir)
-    #configfile = config.read_config(os.path.join(root_dir, 'config/config.yaml'))
+    # root_dir = os.getcwd()
+    # root_dir = os.path.dirname(root_dir)
+    # configfile = config.read_config(os.path.join(root_dir, 'config/config.yaml'))
     # setup_json.set_json()
     # setup_json.set_all()
 
@@ -437,9 +437,11 @@ if __name__ == '__main__':
     # benchmark
     # dict = {4: 22.18367600440979, 5: 11.012670040130615, 6: 37.60151791572571, 8: 13.83693814277649, 10: 6.8414952754974365, 12: 10.590538740158081, 15: 5.543498754501343, 16: 6.0455851554870605, 18: 7.157623291015625, 20: 5.590988636016846, 24: 4.8190929889678955, 30: 6.920377254486084, 35: 6.198363304138184, 40: 7.531091213226318, 48: 8.57279372215271, 60: 9.31027603149414}
     # run_benchmark(configfile)
-
-    CONFIG_PATH = os.path.join(os.getcwd(), 'config/config.yaml')
-    MENU_PATH = os.path.join(os.getcwd(), 'config/menu.yaml')
+    root_dir = os.getcwd()
+    # must be commented out to work in pycharm debugger
+    #root_dir = os.path.dirname(root_dir)
+    CONFIG_PATH = os.path.join(root_dir, 'config/config.yaml')
+    MENU_PATH = os.path.join(root_dir, 'config/menu.yaml')
     # clear output window
     # menu.clear_scr()
     # load general config files
@@ -452,3 +454,4 @@ if __name__ == '__main__':
     if not login.check_login(gen_config, CONFIG_PATH):
         sys.exit('Connection to Discogs not possible.\nNo Network Connection?')
     menu_main(menu_config, gen_config, CONFIG_PATH)
+    #get_collection_data(gen_config)
