@@ -23,6 +23,7 @@ import config
 import module.api as api
 import module.setup_json as setup_json
 import module.cleanup_strings as clean
+import module.benchmark as benchmark
 
 
 @sleep_and_retry
@@ -161,10 +162,10 @@ def mgr_init():
 
 
 
-def get_collection_data(config_yaml: dict, ):
+def get_collection_data(config_yaml: dict, **kwargs):
     # cannot be 0, so max(NUMBER,1) solves this
     workers = max(cpu_count() - 1, 1)
-    #workers = 1
+    #workers = 4
     # create the pool
     manager = SyncManager()
     manager.start(mgr_init)
@@ -172,8 +173,13 @@ def get_collection_data(config_yaml: dict, ):
     list_manager = manager.list()
     pool = Pool(workers)
     try:
-
-        links_discogs, total_items, pages, per_page = api.gen_url(config_yaml)
+        # for benchmark
+        if kwargs:
+            p_page = kwargs.get('per_page')
+            links_discogs, total_items, pages, per_page = api.gen_url(config_yaml, per_page=p_page)
+        # for normal use
+        else:
+            links_discogs, total_items, pages, per_page = api.gen_url(config_yaml)
         part_get_clean_release = partial(get_release_data, list_manager, links_discogs)
 
         #         could do this the below is visualize the rate success /etc
@@ -211,8 +217,28 @@ if __name__ == '__main__':
     #setup_json.set_json()
     #setup_json.set_all()
 
-    res, elapsed = get_collection_data(configfile)
-    print(elapsed)
-    import module.write_to_file as write_to_file
+    #res, elapsed = get_collection_data(configfile)
+    #print(elapsed)
+    #import module.write_to_file as write_to_file
 
-    write_to_file.write_file(res, 'Excel')
+    #write_to_file.write_file(res, 'Excel')
+
+    # benchmark
+    dict = {}
+    res = benchmark.benchmark_per_page(configfile)
+    print(res)
+    togo = len(res)
+    time_left = len(res) * 60
+    for entry in res:
+        elapsed = get_collection_data(configfile, per_page=entry)[1]
+        dict[entry] = elapsed
+        togo -= togo
+        time_left = time_left - 60
+        print(f'just ca. {time_left/60} minutes to go!')
+        print(entry, elapsed)
+        print(' wait a minute...')
+
+        time.sleep(61)
+    min_val = min(dict.items(), key=lambda x: x[1])
+    print(dict)
+    print(min_val)
