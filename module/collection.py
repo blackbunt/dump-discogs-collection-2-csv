@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Dump Collection Info from Discogs API
+Dump Collection Info from Discogs API multithreaded
 """
 import os
 import random
 import time
 import traceback
+import signal
 from functools import partial
 from multiprocessing import Pool, Manager, cpu_count
+from multiprocessing.managers import SyncManager
 from itertools import chain
 
 import pandas as pd
@@ -32,8 +34,8 @@ def call_api(url: str):
         return 'Not Found'
     if response.status_code != 200:
         pass
-        #print('here', response.status_code, url)
-        #raise Exception('API response: {}'.format(response.status_code))
+        # print('here', response.status_code, url)
+        # raise Exception('API response: {}'.format(response.status_code))
     return response
 
 
@@ -67,9 +69,10 @@ def setup_collection_data(config_yaml: dict):
     return urls
 
 
-def get_release_data(listManager = None, links_pokemon = None, process = 0):
-    #     print('Called Pokemon', process)
-    link = links_pokemon[process]
+def get_release_data(list_manager=None, links_discogs=None, process=0):
+    # https://hackernoon.com/multiprocessing-for-heavy-api-requests-with-python-and-the-pokeapi-3u4h3ypn
+    # scrapes api multiprocessed. return pd df and a float with the total elapsed time.
+    link = links_discogs[process]
     info = None
     resolved = False
     #     print(link)
@@ -85,7 +88,7 @@ def get_release_data(listManager = None, links_pokemon = None, process = 0):
                     resolved = True
                     break
             except Exception as e:
-                #print(e)
+                # print(e)
                 if e == 'Too Many Requests':
                     too_many_calls = True
 
@@ -117,14 +120,14 @@ def get_release_data(listManager = None, links_pokemon = None, process = 0):
                             traceback.print_exc()
                     # Generate URL for Webpage and QR code
                     try:
-                        #row['discogs_webpage'] = gen_url(row['discogs_no'])
+                        # row['discogs_webpage'] = gen_url(row['discogs_no'])
                         row['qr_code'] = "http://127.0.0.1:1224/qr/" \
                                          + row['discogs_no'] + "_" \
                                          + clean.cleanup_artist_url(row['artist']) + "-" \
                                          + clean.cleanup_title_url(row['album_title']) + ".png"
                     except Exception:
                         pass
-                        #logger.error("", exc_info=True)
+                        # logger.error("", exc_info=True)
 
                     # add list into the dictionary "collection"
                     collection.append(row)
@@ -132,47 +135,57 @@ def get_release_data(listManager = None, links_pokemon = None, process = 0):
                 resolved = True
 
             elif res.status_code == 429:
-                #print(res.status_code)
+                # print(res.status_code)
                 time.sleep(15)
 
             else:
-                #print(res.status_code)
+                # print(res.status_code)
                 sleep_val = random.randint(1, 10)
                 time.sleep(sleep_val)
 
     except:
         pass
-        #print(f'Take a short break.\n')
+        # print(f'Take a short break.\n')
 
     finally:
         if collection != None:
-            listManager.append(collection)
-            #time.sleep(0.5)
+            list_manager.append(collection)
+            # time.sleep(0.5)
             return
 
 
-def get_collection_data(config_yaml: dict,):
+# initializer for SyncManager
+def mgr_init():
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+
+
+
+def get_collection_data(config_yaml: dict, ):
     # cannot be 0, so max(NUMBER,1) solves this
     workers = max(cpu_count() - 1, 1)
     #workers = 1
     # create the pool
-    manager = Manager()
-
+    manager = SyncManager()
+    manager.start(mgr_init)
     # Need a manager to help get the values async, the values will be updated after join
-    listManager = manager.list()
+    list_manager = manager.list()
     pool = Pool(workers)
     try:
 
-        links_pokemon, total_items, pages, per_page = api.gen_url(config_yaml)
-        part_get_clean_pokemon = partial(get_release_data, listManager, links_pokemon)
+        links_discogs, total_items, pages, per_page = api.gen_url(config_yaml)
+        part_get_clean_release = partial(get_release_data, list_manager, links_discogs)
 
         #         could do this the below is visualize the rate success /etc
-        #         pool.imap(part_get_clean_pokemon, list(range(0, len(links_pokemon))))
+        #         pool.imap(part_get_clean_release, list(range(0, len(links_discogs))))
         #         using tqdm to see progress imap works
-        for _ in tqdm(pool.imap(part_get_clean_pokemon, list(range(0, len(links_pokemon)))), total=len(links_pokemon),
-                      desc=f'Scraping Discogs. Total items: {total_items} in blocks of {per_page}', unit='Blocks',
-                      colour='yellow'):
-
+        # build progressbar and thread for every url in the list manager
+        t = tqdm(pool.imap(part_get_clean_release, list(range(0, len(links_discogs)))), total=len(links_discogs),
+                 desc=f'Scraping Discogs. Total items: {total_items} in blocks of {per_page}', unit='Blocks',
+                 colour='yellow')
+        for _ in t:
+            # return the elapsed time for scraping
+            elapsed = t.format_dict["elapsed"]
             pass
         pool.close()
         pool.join()
@@ -181,21 +194,25 @@ def get_collection_data(config_yaml: dict,):
         pool.join()
 
 
-    collection_list = list(chain.from_iterable(listManager))
 
-
-
+    # remove unnecessary nestings in list
+    collection_list = list(chain.from_iterable(list_manager))
     df_collection = pd.DataFrame(collection_list)
-    df_collection.sort_values(['date_added'], )
-    return df_collection
+    df_collection.sort_values(["date_added", "artist"], axis=0, ascending=[False, True], inplace=True)
+    # df_collection.sort_values(['date_added'], )
+    manager.shutdown()
+    return df_collection, elapsed
 
 
 if __name__ == '__main__':
     root_dir = os.getcwd()
     root_dir = os.path.dirname(root_dir)
     configfile = config.read_config(os.path.join(root_dir, 'config/config.yaml'))
-    setup_json.set_json()
-    setup_json.set_all()
+    #setup_json.set_json()
+    #setup_json.set_all()
 
+    res, elapsed = get_collection_data(configfile)
+    print(elapsed)
+    import module.write_to_file as write_to_file
 
-    print(get_collection_data(configfile))
+    write_to_file.write_file(res, 'Excel')

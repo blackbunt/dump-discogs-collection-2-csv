@@ -12,6 +12,8 @@ from pick import pick
 import config
 import module.collection as collection
 import module.login as login
+import module.write_to_file as write_to_file
+import module.setup_json as setup_json
 
 #test dict
 main_menu: dict = {
@@ -132,9 +134,17 @@ def menu_main(menu_config_yaml: dict, gen_config_yaml: dict, gen_config_path):
     config_file = menu_config_yaml['MainMenu']
     res = show_menu(config_file, 0)
     if res[1] == 0:  # Run Data Dump 2 Excel File
-        not_implemented_yet()
+        test(gen_config_yaml)
+        #data, time = collection.get_collection_data(gen_config_yaml)
+        #write_to_file.write_file(data, 'Excel')
+        menu_main(menu_config_yaml, gen_config_yaml, gen_config_path)
+        #print(time)
     elif res[1] == 1:  # Run Data Dump 2 CSV File
-        not_implemented_yet()
+        setup_json.set_json()
+        setup_json.set_all()
+        data, time = collection.get_collection_data(gen_config_yaml)
+        write_to_file.write_file(data, 'Csv')
+        menu_main(menu_config_yaml, gen_config_yaml, gen_config_path)
     elif res[1] == 2:  # Run Show Library Statistics
         menu_statistics(menu_config_yaml, gen_config_yaml, gen_config_path)
     elif res[1] == 3:  # Configure Login Data
@@ -144,6 +154,10 @@ def menu_main(menu_config_yaml: dict, gen_config_yaml: dict, gen_config_path):
     else:
         exit()
 
+
+def test(gen_config_yaml: dict):
+    data, time = collection.get_collection_data(gen_config_yaml)
+    write_to_file.write_file(data, 'Excel')
 
 def menu_statistics(menu_config_yaml: dict, gen_config_yaml: dict, gen_config_path):
     """

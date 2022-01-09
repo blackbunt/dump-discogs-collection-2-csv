@@ -1,4 +1,4 @@
-import cleanup_strings as clean
+import module.cleanup_strings as clean
 from functools import partial
 
 # Set jsonpath_ng strings
