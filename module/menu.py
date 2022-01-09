@@ -10,7 +10,7 @@ from keyboard import wait
 from pick import pick
 
 import config
-import module.collection as collection
+import collection as collection
 import module.login as login
 import module.write_to_file as write_to_file
 import module.setup_json as setup_json
