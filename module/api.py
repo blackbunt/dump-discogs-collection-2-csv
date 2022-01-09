@@ -42,7 +42,7 @@ def get_query(conf: dict, **kwargs):
     return conf_query
 
 
-def gen_url(conf: dict):
+def gen_url(conf: dict, **kwargs):
     """
     Generates a list containing the Download URLs
     :param conf:
@@ -51,14 +51,20 @@ def gen_url(conf: dict):
     liste = []
     url = conf['API']['processing_url']
     url = url.replace('{username}', conf['Login']['username'])
-    url = url.replace('{per_page}', str(conf['API']['scrape']['per_page']))
+
     url = url.replace('{token}', conf['Login']['apitoken'])
     res = requests.get(url)
     res = json.loads(res.text.encode('utf-8'))
     api_json = res['pagination']
     total_items = api_json['items']
     pages = api_json['pages']
-    per_page = api_json['per_page']
+    #per_page = api_json['per_page']
+    if kwargs:
+        per_page = kwargs.get('per_page')
+        url = url.replace('{per_page}', str(per_page))
+    else:
+        per_page = api_json['per_page']
+        url = url.replace('{per_page}', str(conf['API']['scrape']['per_page']))
     for item in range(1, pages + 1):
         url_new = url
         url_new = url_new.replace('{page}', str(item))
