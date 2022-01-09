@@ -3,6 +3,8 @@
 """
 handles api calls
 """
+import time
+
 import requests
 import config
 import os
@@ -63,6 +65,16 @@ def gen_url(conf: dict, **kwargs):
 
     else:
         url = url.replace('{token}', conf['Login']['apitoken'])
+        url = url.replace('{per_page}', str(conf['API']['scrape']['per_page']))
+        handler = True
+        while handler:
+            res = requests.get(url)
+            remaining = int(res.headers['X-Discogs-Ratelimit-Remaining'])
+            if remaining > 1:
+                break
+            else:
+                print('Too many API calls occured. Waiting 5 secs.')
+                time.sleep(5)
         res = requests.get(url)
         res = json.loads(res.text.encode('utf-8'))
         api_json = res['pagination']
