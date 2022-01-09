@@ -4,11 +4,8 @@ Benchmarking API Calls
 
 import module.api as api
 import module.config as config
-import json
 import os
-from multiprocessing import cpu_count
 import math
-import module.collection as collection
 
 
 def benchmark_per_page(config_yaml: str):
