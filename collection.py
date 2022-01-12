@@ -392,9 +392,9 @@ def menu_main(menu_config_yaml: dict, gen_config_yaml: dict, gen_config_path):
     elif res[1] == 3:  # Configure Login Data
         menu_login_data(menu_config_yaml, gen_config_yaml, gen_config_path)
     elif res[1] == 4:  # Exit Program
-        exit()
+        sys.exit()
     else:
-        exit()
+        sys.exit()
 
 
 def menu_statistics(menu_config_yaml: dict, gen_config_yaml: dict, gen_config_path):
