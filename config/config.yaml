@@ -17,5 +17,5 @@ API:
     per_page: 6
   value_url: https://api.discogs.com/users/{username}/collection/value
 Login:
-  apitoken: iDRDSpINYaBTypzuDJefwBqqUeGzzUFcHqPgMniq
-  username: buntstift
+  apitoken:
+  username:
