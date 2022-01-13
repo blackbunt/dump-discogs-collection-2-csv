@@ -11,6 +11,7 @@ import time
 import traceback
 import signal
 import requests
+import multiprocessing
 from functools import partial
 from multiprocessing import Pool, Manager, cpu_count
 from multiprocessing.managers import SyncManager
@@ -422,6 +423,7 @@ def menu_statistics(menu_config_yaml: dict, gen_config_yaml: dict, gen_config_pa
 
 
 if __name__ == '__main__':
+    multiprocessing.freeze_support()
     # root_dir = os.getcwd()
     # root_dir = os.path.dirname(root_dir)
     # configfile = config.read_config(os.path.join(root_dir, 'config/config.yaml'))
