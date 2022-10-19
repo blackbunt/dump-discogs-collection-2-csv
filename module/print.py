@@ -20,5 +20,6 @@ def title():
     print("2. Load collection, generate QR codes and write to Excel File")
     print("3. Load collection, generate QR codes and write to Csv File")
     print("4. Load collection and just create QR Codes")
+    print("5. Dump Cover Art")
     print("0. Exit")
     print("")
