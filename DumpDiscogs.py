@@ -11,6 +11,7 @@ import configparser
 import check_exists as exist
 import urllib.request
 import logging
+import re
 
 # Basic logging to file
 LOG_FILENAME="debug.log"
@@ -100,6 +101,9 @@ while True:
                     discogs_no = str(_db.iloc[item]['discogs_no'])
                     artist = str(_db.iloc[item]['artist'])
                     album_title = str(_db.iloc[item]['album_title'])
+                    # sanitize the title (for example, album names having / in the name)
+                    artist = re.sub(r'[^a-zA-Z0-9]', '_', artist)
+                    album_title = re.sub(r'[^a-zA-Z0-9]', '_', album_title)
 
                     filename = discogs_no + "_" + artist + '-' + album_title + '.jpg'
                     cover_art_url = str(_db.iloc[item]['cover_full_url'])
