@@ -39,6 +39,7 @@ def mock_collection_page():
                 formats=[],
                 genres=["Rock"],
                 styles=["Alternative"],
+                thumb="",
                 cover_image="",
             ),
             notes=[],
@@ -62,14 +63,13 @@ async def test_collection_fetcher_fetch_all(mock_collection_page):
     # Create mock client
     mock_client = AsyncMock(spec=DiscogsClient)
     mock_client.get_collection_page = AsyncMock(return_value=mock_collection_page)
-    mock_client.get_collection_all = AsyncMock()
 
-    # Make get_collection_all return releases
+    # Make get_collection_all return async generator
     async def mock_get_all(*args, **kwargs):
         for release in mock_collection_page.releases:
             yield release
 
-    mock_client.get_collection_all.return_value = mock_get_all()
+    mock_client.get_collection_all = mock_get_all
 
     # Create fetcher
     fetcher = CollectionFetcher(mock_client, "testuser")
@@ -96,7 +96,7 @@ async def test_collection_fetcher_with_progress_callback(mock_collection_page):
         for release in mock_collection_page.releases:
             yield release
 
-    mock_client.get_collection_all.return_value = mock_get_all()
+    mock_client.get_collection_all = mock_get_all
 
     # Create progress tracker
     progress_updates = []
@@ -128,7 +128,7 @@ async def test_collection_fetcher_state_saving(mock_collection_page, tmp_path):
         for release in mock_collection_page.releases:
             yield release
 
-    mock_client.get_collection_all.return_value = mock_get_all()
+    mock_client.get_collection_all = mock_get_all
 
     # Create fetcher with small save interval
     fetcher = CollectionFetcher(

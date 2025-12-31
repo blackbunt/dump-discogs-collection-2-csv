@@ -43,6 +43,7 @@ def sample_releases():
                 ],
                 genres=["Rock", "Electronic"],
                 styles=["Alternative", "Ambient"],
+                thumb=f"https://example.com/thumb{i}.jpg",
                 cover_image=f"https://example.com/cover{i}.jpg",
             ),
             notes=[],
@@ -155,7 +156,13 @@ def test_exporter_export_convenience_function(sample_releases, tmp_path):
     # Verify file was created with correct extension
     assert result_path.exists()
     assert result_path.suffix == ".xlsx"
-    assert "cover_url" in str(result_path.read_bytes())  # Column exists in file
+
+    # Verify cover_url column exists by reading back the Excel
+    import pandas as pd
+
+    df_read = pd.read_excel(result_path)
+    assert "cover_url" in df_read.columns
+    assert len(df_read) == 5
 
 
 def test_exporter_handles_missing_fields(tmp_path):
@@ -175,6 +182,7 @@ def test_exporter_handles_missing_fields(tmp_path):
             formats=[],  # No formats
             genres=[],
             styles=[],
+            thumb="",
             cover_image="",
         ),
         notes=[],

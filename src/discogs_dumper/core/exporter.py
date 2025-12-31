@@ -120,11 +120,7 @@ class CollectionExporter:
 
             # Optional: Cover URL
             if include_cover_url:
-                cover_url = (
-                    basic_info.cover_image_urls.primary
-                    or basic_info.cover_image_urls.secondary
-                    or ""
-                )
+                cover_url = basic_info.cover_image or ""
                 row[COLUMN_COVER_URL] = cover_url
 
             # Optional: QR URL
