@@ -90,8 +90,11 @@ class CollectionExporter:
             )
 
             # Extract format (join multiple formats)
+            # Note: qty is a string from the API
             formats = ", ".join(
-                f"{fmt.name} ({fmt.qty}x)" if fmt.qty and fmt.qty > 1 else fmt.name
+                f"{fmt.name} ({fmt.qty}x)"
+                if fmt.qty and fmt.qty != "1"
+                else fmt.name
                 for fmt in basic_info.formats
             )
 
