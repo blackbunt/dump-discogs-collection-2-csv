@@ -50,23 +50,20 @@ class CollectionStatistics:
         table.add_column("Metric", style="cyan", no_wrap=True)
         table.add_column("Value", style="green")
 
-        # Total items
-        table.add_row("Total Items", str(value_info.count))
+        # Values are already formatted strings from the API (e.g., "€1,234.56")
+        # Display them directly
 
         # Minimum value
         if value_info.minimum:
-            min_val = f"${value_info.minimum:,.2f} ({value_info.median_currency})"
-            table.add_row("Minimum Value", min_val)
+            table.add_row("Minimum Value", value_info.minimum)
 
         # Median value
         if value_info.median:
-            median_val = f"${value_info.median:,.2f} ({value_info.median_currency})"
-            table.add_row("Median Value", median_val)
+            table.add_row("Median Value", value_info.median)
 
         # Maximum value
         if value_info.maximum:
-            max_val = f"${value_info.maximum:,.2f} ({value_info.median_currency})"
-            table.add_row("Maximum Value", max_val)
+            table.add_row("Maximum Value", value_info.maximum)
 
         self.console.print()
         self.console.print(table)

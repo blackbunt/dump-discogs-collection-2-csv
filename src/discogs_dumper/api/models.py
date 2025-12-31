@@ -259,11 +259,15 @@ class CollectionPage(BaseModel):
 
 
 class CollectionValue(BaseModel):
-    """Collection value statistics from Discogs API."""
+    """Collection value statistics from Discogs API.
 
-    minimum: str
-    median: str
-    maximum: str
+    The Discogs API returns value information as formatted strings
+    with currency symbols (e.g., "€1,234.56").
+    """
+
+    minimum: str = ""
+    median: str = ""
+    maximum: str = ""
 
     @computed_field  # type: ignore[prop-decorator]
     @property
