@@ -5,7 +5,7 @@ progress tracking, resume capability, and error handling.
 """
 
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from loguru import logger
@@ -74,7 +74,7 @@ class CollectionFetcher:
         else:
             self.state = self._create_initial_state()
 
-        self._last_save_time = datetime.now()
+        self._last_save_time = datetime.now(timezone.utc)
 
     def _create_initial_state(self) -> ProgressState:
         """Create initial progress state.
@@ -82,10 +82,11 @@ class CollectionFetcher:
         Returns:
             New ProgressState with current timestamp
         """
+        now = datetime.now(timezone.utc)
         return ProgressState(
             username=self.username,
-            started_at=datetime.now(),
-            last_updated=datetime.now(),
+            started_at=now,
+            last_updated=now,
             total_items=0,
             fetched_items=0,
         )
@@ -101,7 +102,7 @@ class CollectionFetcher:
             return True
 
         # Save based on time elapsed
-        elapsed = (datetime.now() - self._last_save_time).total_seconds()
+        elapsed = (datetime.now(timezone.utc) - self._last_save_time).total_seconds()
         if elapsed >= self.save_interval_seconds:
             return True
 
@@ -109,9 +110,9 @@ class CollectionFetcher:
 
     def _save_state(self) -> None:
         """Save current progress state."""
-        self.state.last_updated = datetime.now()
+        self.state.last_updated = datetime.now(timezone.utc)
         StateManager.save_state(self.state)
-        self._last_save_time = datetime.now()
+        self._last_save_time = datetime.now(timezone.utc)
         logger.debug(
             f"State saved: {self.state.fetched_items}/{self.state.total_items} items"
         )
