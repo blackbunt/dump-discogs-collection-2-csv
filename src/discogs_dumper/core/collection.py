@@ -148,9 +148,9 @@ class CollectionFetcher:
         logger.info(f"Fetching collection for user '{self.username}'")
 
         try:
-            # Get collection value to determine total items
-            value_info = await self.client.get_collection_value()
-            total_items = value_info.count
+            # Get first page to determine total items from pagination
+            first_page = await self.client.get_collection_page(page=1, per_page=per_page)
+            total_items = first_page.pagination.items
 
             # Update state with total
             self.state = StateManager.get_or_create_state(
