@@ -72,3 +72,4 @@ Cover-Art/
 *.tmp
 *.bak
 ~*
+.~lock.*#
