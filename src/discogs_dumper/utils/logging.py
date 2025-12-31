@@ -136,6 +136,6 @@ logger.remove()  # Remove default handler
 logger.add(
     sys.stderr,
     format="<green>{time:HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
-    level="INFO",
+    level="WARNING",  # Only show warnings and errors by default
     colorize=True,
 )
