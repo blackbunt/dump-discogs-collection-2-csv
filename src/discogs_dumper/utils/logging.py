@@ -45,7 +45,7 @@ def setup_logging(
     elif verbose:
         console_level = "DEBUG"
     else:
-        console_level = "INFO"
+        console_level = "WARNING"  # Default: only warnings and errors
 
     # Console handler with color and formatting
     console_format = (
