@@ -1,0 +1,179 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "discogs-dumper"
+version = "2.0.0"
+description = "Export Discogs music collections to Excel/CSV with QR codes and cover art"
+authors = [{name = "Bernie"}]
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.12"
+keywords = ["discogs", "music", "collection", "export", "cli"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Sound/Audio",
+]
+
+dependencies = [
+    "aiohttp>=3.9.0",
+    "click>=8.1.0",
+    "keyring>=24.0.0",
+    "loguru>=0.7.0",
+    "pandas>=2.2.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "qrcode[pil]>=7.4.2",
+    "rich>=13.0.0",
+    "openpyxl>=3.1.0",
+    "aiofiles>=23.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
+    "mypy>=1.7.0",
+    "ruff>=0.1.0",
+    "pre-commit>=3.5.0",
+    "types-aiofiles",
+]
+
+[project.scripts]
+discogs-dumper = "discogs_dumper.cli.main:cli"
+
+[project.urls]
+Homepage = "https://github.com/blackbunt/dump-discogs-collection-2-csv"
+Repository = "https://github.com/blackbunt/dump-discogs-collection-2-csv"
+Issues = "https://github.com/blackbunt/dump-discogs-collection-2-csv/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+discogs_dumper = ["py.typed"]
+
+# Ruff configuration - replaces black, isort, flake8
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "N",      # pep8-naming
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "SIM",    # flake8-simplify
+    "TCH",    # flake8-type-checking
+    "ANN",    # flake8-annotations
+    "ASYNC",  # flake8-async
+    "S",      # flake8-bandit (security)
+    "T20",    # flake8-print
+    "RET",    # flake8-return
+    "ARG",    # flake8-unused-arguments
+]
+ignore = [
+    "E501",     # Line too long (handled by formatter)
+    "ANN101",   # Missing type annotation for self
+    "ANN102",   # Missing type annotation for cls
+    "S101",     # Use of assert (OK in tests)
+    "T201",     # print() allowed (CLI tool)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "ANN"]  # Allow assert and no type hints in tests
+"scripts/**/*.py" = ["T201"]       # Allow print in scripts
+
+[tool.ruff.lint.isort]
+known-first-party = ["discogs_dumper"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+
+# Mypy configuration - strict type checking
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_any_unimported = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+check_untyped_defs = true
+strict_equality = true
+show_error_codes = true
+pretty = true
+
+# Allow missing imports for third-party packages without stubs
+[[tool.mypy.overrides]]
+module = [
+    "qrcode.*",
+    "pick.*",
+    "keyboard.*",
+]
+ignore_missing_imports = true
+
+# Pytest configuration
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+pythonpath = ["src"]
+asyncio_mode = "auto"
+addopts = [
+    "--cov=discogs_dumper",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-report=xml",
+    "--strict-markers",
+    "--tb=short",
+]
+markers = [
+    "integration: Integration tests (may hit real API)",
+    "slow: Slow tests",
+]
+
+# Coverage configuration
+[tool.coverage.run]
+source = ["src/discogs_dumper"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/__main__.py",
+]
+branch = true
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if TYPE_CHECKING:",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "@abstractmethod",
+    "@abc.abstractmethod",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"

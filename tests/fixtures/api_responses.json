@@ -1,0 +1,149 @@
+{
+  "collection_page_1": {
+    "pagination": {
+      "page": 1,
+      "pages": 3,
+      "per_page": 100,
+      "items": 250
+    },
+    "releases": [
+      {
+        "id": 123456,
+        "instance_id": 999001,
+        "date_added": "2024-01-15T10:30:00-08:00",
+        "rating": 5,
+        "basic_information": {
+          "id": 123456,
+          "title": "Test Album 1",
+          "year": 2024,
+          "artists": [
+            {
+              "id": 1001,
+              "name": "Test Artist 1",
+              "resource_url": "https://api.discogs.com/artists/1001"
+            }
+          ],
+          "labels": [
+            {
+              "name": "Test Label 1",
+              "catno": "TEST001"
+            }
+          ],
+          "formats": [
+            {
+              "name": "Vinyl",
+              "qty": "1",
+              "descriptions": ["LP", "Album", "33 ⅓ RPM"]
+            }
+          ],
+          "styles": ["Rock", "Alternative Rock"],
+          "genres": ["Rock"],
+          "thumb": "https://example.com/thumb1.jpg",
+          "cover_image": "https://example.com/cover1.jpg"
+        },
+        "notes": []
+      }
+    ]
+  },
+  "collection_page_2": {
+    "pagination": {
+      "page": 2,
+      "pages": 3,
+      "per_page": 100,
+      "items": 250
+    },
+    "releases": [
+      {
+        "id": 234567,
+        "instance_id": 999002,
+        "date_added": "2024-02-20T14:15:00-08:00",
+        "rating": 4,
+        "basic_information": {
+          "id": 234567,
+          "title": "Test Album 2",
+          "year": 2023,
+          "artists": [
+            {
+              "id": 1002,
+              "name": "Test Artist 2",
+              "resource_url": "https://api.discogs.com/artists/1002"
+            }
+          ],
+          "labels": [
+            {
+              "name": "Test Label 2",
+              "catno": "TEST002"
+            }
+          ],
+          "formats": [
+            {
+              "name": "CD",
+              "qty": "1",
+              "descriptions": ["Album"]
+            }
+          ],
+          "styles": ["Jazz", "Bebop"],
+          "genres": ["Jazz"],
+          "thumb": "https://example.com/thumb2.jpg",
+          "cover_image": "https://example.com/cover2.jpg"
+        },
+        "notes": []
+      }
+    ]
+  },
+  "collection_value": {
+    "minimum": "€1,234.56",
+    "median": "€5,678.90",
+    "maximum": "€12,345.67"
+  },
+  "empty_collection": {
+    "pagination": {
+      "page": 1,
+      "pages": 1,
+      "per_page": 100,
+      "items": 0
+    },
+    "releases": []
+  },
+  "single_release": {
+    "id": 345678,
+    "instance_id": 999003,
+    "date_added": "2024-03-10T09:00:00-08:00",
+    "rating": 3,
+    "basic_information": {
+      "id": 345678,
+      "title": "Single Release Test",
+      "year": 2022,
+      "artists": [
+        {
+          "id": 1003,
+          "name": "Solo Artist",
+          "resource_url": "https://api.discogs.com/artists/1003"
+        }
+      ],
+      "labels": [
+        {
+          "name": "Independent Label",
+          "catno": "IND001"
+        }
+      ],
+      "formats": [
+        {
+          "name": "Cassette",
+          "qty": "1",
+          "descriptions": ["Album", "Limited Edition"]
+        }
+      ],
+      "styles": ["Electronic", "Ambient"],
+      "genres": ["Electronic"],
+      "thumb": "https://example.com/thumb3.jpg",
+      "cover_image": "https://example.com/cover3.jpg"
+    },
+    "notes": [
+      {
+        "field_id": 1,
+        "value": "First pressing"
+      }
+    ]
+  }
+}
